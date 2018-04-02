@@ -11,7 +11,7 @@
         private $global_vars;
         private $pew_functions;
 
-        function __construct($tipo = "standard", $limiteProdutos = 4, $tituloVitrine = "", $descricaoVitrine = ""){
+        function __construct($tipo = "standard", $limiteProdutos = 0, $tituloVitrine = "", $descricaoVitrine = ""){
             $this->tipo = $tipo;
             $this->limite_produtos = $limiteProdutos;
             $this->titulo_vitrine = $tituloVitrine;
@@ -106,7 +106,7 @@
                     $produto = new Produtos();
                     $idProduto = $produto->query_produto("status = 1 $except_ids");
                     if($idProduto != false){
-                        //$except_ids .= " and id != '$idProduto'"; # Exeto os produtos já selecionados #
+                        $except_ids .= " and id != '$idProduto'"; # Exeto os produtos já selecionados #
                         listar_produto($idProduto);
                         $ctrlProdutos++;
                     }
@@ -252,7 +252,7 @@
                     $produto = new Produtos();
                     $idProduto = $produto->query_produto("status = 1 $except_ids");
                     if($idProduto != false){
-                        //$except_ids .= " and id != '$idProduto'"; # Exeto os produtos já selecionados #
+                        $except_ids .= " and id != '$idProduto'"; # Exeto os produtos já selecionados #
                         listar_produto($idProduto);
                         $ctrlProdutos++;
                     }

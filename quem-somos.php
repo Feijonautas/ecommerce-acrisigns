@@ -24,10 +24,36 @@
         <!--PAGE CSS-->
         <style>
             .main-content{
-                width: 80%;
+                width: 100%;
                 margin: 0 auto;
                 min-height: 300px;
             }
+			.banner-quem-somos{
+				width: 100%;
+				height: 500px;
+				margin-bottom: 100px;
+				background-color: #666;
+			}
+			.text-espec{
+				width: 80%;
+				margin: 0 auto;
+				margin-bottom: 30px;
+			}
+			.text-espec h1{
+				margin: 0;
+				text-align: center;
+			}
+			.text-espec p{
+				text-align: justify;
+			}
+			.inf{
+				display: flex;
+				align-items: flex-start;
+				flex-direction: column;
+				width: 80%;
+				margin: auto;
+				margin-bottom: 100px;
+			}
         </style>
         <!--END PAGE CSS-->
         <!--PAGE JS-->
@@ -48,12 +74,15 @@
         ?>
         <!--THIS PAGE CONTENT-->
         <div class="main-content">
-            <h1 align=center>QUEM SOMOS</h1>
-            <article>Ao contrário do que se acredita, Lorem Ipsum não é simplesmente um texto randômico. Com mais de 2000 anos, suas raízes podem ser encontradas em uma obra de literatura latina. Lorem Ipsum não é simplesmente um texto randômico. Com mais de 2000 anos, suas raízes podem ser encontradas em uma obra de literatura latina.</article>
-            <br><br>
-            <h4>Acesse:</h4>
-            <a href="garantia-de-qualidade.php" class="link-padrao">Garantia de qualidade</a>
-            <a href="frete-gratis.php" class="link-padrao">Frete Grátis</a>
+            <div class="banner-quem-somos"></div>
+            <div class="text-espec">
+            	<h1>ACRISIGNS</h1>
+            	<p>Lorem Ipsum é simplesmente uma simulação de texto da indústria tipográfica e de impressos, e vem sendo utilizado desde o século XVI, quando um impressor desconhecido pegou uma bandeja de tipos e os embaralhou para fazer um livro de modelos de tipos. Lorem Ipsum sobreviveu não só a cinco séculos, como também ao salto para a editoração eletrônica,</p>
+            </div>
+            <div class="inf">
+				<a href="garantia-de-qualidade.php" class="link-padrao">Garantia de qualidade</a>
+				<a href="frete-gratis.php" class="link-padrao">Frete Grátis</a>
+       		</div>
         </div>
         <!--END THIS PAGE CONTENT-->
         <?php

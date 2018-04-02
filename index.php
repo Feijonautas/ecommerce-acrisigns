@@ -48,7 +48,6 @@
             /*PAGE CUSTONS*/
             echo "<div class='main-content'>";
             require_once "@include-banner-principal.php";
-            require_once "@include-vitrine-categorias.php";
             require_once "@include-vitrine-produtos-index.php";
             echo "</div>";
             /*END PAGE CUSTONS*/

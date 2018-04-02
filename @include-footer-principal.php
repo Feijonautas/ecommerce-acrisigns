@@ -4,12 +4,13 @@
         display: flex;
         justify-content: center;
         align-content: center;
-        background-color: #e2e2e2;
+        background-color: #000;
         font-size: 16px;
         flex-flow: row wrap;
         overflow: hidden;
     }
     .footer-principal .newsletter{
+		position: relative;
         width: 100%;
         display: block;
         padding: 50px 0px 50px 0px;
@@ -18,11 +19,18 @@
         margin: 0px 0px 5px 0px;
         font-size: 16px;
         text-align: center;
+		color: #FFF;
     }
+	.footer-principal .newsletter .logo-footer{
+		position: absolute;
+		left: 250px;
+		top: 70px;
+	}
     .footer-principal .newsletter .subtitulo{
         margin: 0px 0px 10px 0px;
         font-size: 14px;
         text-align: center;
+		color: #ccc;
     }
     .footer-principal .newsletter .form-newsletter{
         width: 330px;
@@ -44,12 +52,13 @@
     .footer-principal .newsletter .form-newsletter .btn-submit{
         width: 80px;
         height: 25px;
-        background-color: #333;
+        background-color: #FFF;
         border: none;
-        color: #fff;
+        color: #333;
     }
     .footer-principal .newsletter .form-newsletter .btn-submit:hover{
-        background-color: #111;
+        background-color: #66CD00;
+		color: #fff;
         cursor: pointer;
     }
     .footer-principal .display-links{
@@ -76,14 +85,14 @@
         display: block;
         font-size: 16px;
         text-decoration: none;
-        color: #333;
+        color: #fff;
         padding: 2px 0px 2px 0px;
         margin-bottom: 10px;
         border-bottom: 1px solid transparent;
         transition: .3s;
     }
     .footer-principal .display-links .footer-links .first-li .link-principal:hover{
-        border-color: #333;
+        border-color: #66CD00;
     }
     .footer-principal .display-links .footer-links .first-li .sub-menu{
         margin: 0px;
@@ -96,7 +105,7 @@
     .footer-principal .display-links .footer-links .first-li .sub-menu li .sub-link{
         display: block;
         text-decoration: none;
-        color: #333;
+        color: #ccc;
         padding: 2.5px;
         margin: 0px 0px 5px 0px;
     }
@@ -222,6 +231,7 @@
 </script>
 <footer class="footer-principal">
     <div class="newsletter">
+       	<img class="logo-footer" src="imagens/identidadeVisual/logo-acrisigns.png">
         <h3 class="titulo">RECEBA AS NOVIDADES DA MAIDI GREY</h3>
         <h4 class="subtitulo">Lançamentos e promoções em primeira mão</h4>
         <form class="form-newsletter">
@@ -349,7 +359,6 @@
                     <ul class="sub-menu">
                         <li class="social-media">
                             <a href="#" class="facebook"><i class="fab fa-facebook-f"></i></a>
-                            <a href="#" class="instagram"><i class="fab fa-instagram"></i></a>
                         </li>
                     </ul>
                 </span>

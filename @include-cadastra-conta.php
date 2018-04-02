@@ -148,12 +148,6 @@
         opacity: 0;
         transition: .2s;
     }
-    .section-cadastra .display-formularios .formulario-cadastro .input-title{
-        font-size: 14px;
-        margin: 0px;
-        text-align: left;
-        color: #666;
-    }
     .section-cadastra .display-formularios .formulario-cadastro .input-nochange{
         background-color: #f3f3f3;
         pointer-events: none;

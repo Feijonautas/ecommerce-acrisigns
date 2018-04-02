@@ -8,7 +8,7 @@
         -webkit-box-pack: center;
         -ms-flex-pack: center;
         justify-content: center;
-        margin-bottom: 20px;
+		background-color: #000;
     }
     .header-principal .nav-header{
         position: relative;
@@ -34,9 +34,10 @@
         -webkit-box-align: center;
         -ms-flex-align: center;
         align-items: center;
-        background-color: #fff;
-        border-bottom: 1px solid #dedede;
+        background-color: #111;
+        border-bottom: 1px solid #4F4F4F;
         z-index: 80;
+		color: #fff;
     }
     .header-principal .nav-header .top-bar .link-padrao{
         margin: 0px 10px 0px 10px;
@@ -44,11 +45,11 @@
         -o-transition: .2s;
         transition: .2s;
         cursor: pointer;
-        color: #666;
+        color: #FFF;
     }
     .header-principal .nav-header .top-bar .link-padrao:hover{
-        color: #111;
-        border-color: #111;
+        color: #66CD00;
+        border-color: #66CD00;
     }
     .header-principal .nav-header .top-bar .header-cart{
         position: relative;
@@ -80,7 +81,7 @@
     }
     .header-principal .nav-header .top-bar .header-cart:hover .cart-button{
         height: 50px;
-        color: #444;
+        color: #66CD00;
         pointer-events: none;
     }
     .header-principal .nav-header .top-bar .header-cart .cart-display{
@@ -241,7 +242,7 @@
         width: 100%;
         margin-top: 50px;
         height: 100px;
-        border-bottom: 1px solid #333;
+        border-bottom: 1px solid #66CD00;
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
@@ -312,7 +313,7 @@
         text-align: center;
     }
     .header-principal .nav-header .top-nav .logo-header img{
-        width: 45%;
+        width: 270px;
         -webkit-transition: .2s;
         -o-transition: .2s;
         transition: .2s;
@@ -487,7 +488,7 @@
         -o-transition: .2s linear;
         transition: .2s linear;
         text-decoration: none;
-        color: #333;
+        color: #FFF;
         font-weight: bold;
     }
     .header-principal .nav-header .display-links .sub-menu{
@@ -506,8 +507,9 @@
     .header-principal .nav-header .display-links .sub-menu ul{
         list-style: none;
     }
-    .header-principal .nav-header .display-links .first-li:hover .link-principal{
-        background-color: #f6f6f6;
+    .header-principal .nav-header .display-links .first-li .link-principal:hover{
+        background-color: #FFF;
+		color: #66CD00;
     }
     .header-principal .nav-header .display-links .first-li:hover .sub-menu{
         opacity: 1;
@@ -794,7 +796,7 @@
 </style>
 <header class="header-principal">
     <?php
-        $dirLogoPrincipal = "imagens/identidadeVisual/logo-bolsa-em-couro.png";
+        $dirLogoPrincipal = "imagens/identidadeVisual/logo-acrisigns.png";
     ?>
     <nav class="nav-header">
         <div class="top-bar">
@@ -827,7 +829,6 @@
             <div class="logo-header"><a href="index.php"><img src="<?php echo $dirLogoPrincipal;?>" alt="Logo - Bolsas em Couro by Maidi Grey" title="Página Inicial - Bolsas em Couro"></a></div>
             <div class="social-media-field">
                 <a href="#" class="facebook"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="instagram"><i class="fab fa-instagram"></i></a>
             </div>
         </div>
         <?php
@@ -1028,28 +1029,30 @@
             $urlLink = $link_departamento["url"];
             $link_nav[$countLinks] = new NavLinks($tituloLink, $urlLink);
             $sublinks = isset($link_departamento["sublinks"]) ? $link_departamento["sublinks"] : null;
-            $totalSublinks = count($sublinks);
-            foreach($sublinks as $indice => $slink){
-                $titulo = $slink["titulo"];
-                $url = $slink["url"];
-                $subsublinks = isset($slink["subsublinks"]) ? $slink["subsublinks"] : null;
-                $totalSubsub = count($subsublinks);
-                $link_nav[$countLinks]->add_sublink($countLinks, $titulo, $url);
-                if($totalSubsub > 0){
-                    foreach($subsublinks as $sublink){
-                        $tituloSub = $sublink["titulo"];
-                        $urlSub = $sublink["url"];
-                        $boxDestaque = isset($sublink["box_destaque"]) && $sublink["box_destaque"] != "" ? $sublink["box_destaque"] : false;
-                        $link_nav[$countLinks]->add_sub_sublink($countLinks, $tituloSub, $urlSub, $boxDestaque);
-                    }
-                }
-            }
-            $countLinks++;
+            $totalSublinks = is_array($sublinks) ? count($sublinks) : 0;
+			if($totalSublinks > 0){
+				foreach($sublinks as $indice => $slink){
+					$titulo = $slink["titulo"];
+					$url = $slink["url"];
+					$subsublinks = isset($slink["subsublinks"]) ? $slink["subsublinks"] : null;
+					$totalSubsub = is_array($sublinks) == false ? count($subsublinks) : 0;
+					$link_nav[$countLinks]->add_sublink($countLinks, $titulo, $url);
+					if($totalSubsub > 0){
+						foreach($subsublinks as $sublink){
+							$tituloSub = $sublink["titulo"];
+							$urlSub = $sublink["url"];
+							$boxDestaque = isset($sublink["box_destaque"]) && $sublink["box_destaque"] != "" ? $sublink["box_destaque"] : false;
+							$link_nav[$countLinks]->add_sub_sublink($countLinks, $tituloSub, $urlSub, $boxDestaque);
+						}
+					}
+				}
+			}
+			$countLinks++;
         }
         
         /*END LINKS ALTERAVEIS*/
         
-        $link_nav[$countLinks] = new NavLinks("DICAS", "dicas.php");
+        $link_nav[$countLinks] = new NavLinks("QUEM SOMOS", "quem-somos.php");
         $countLinks++;
         $link_nav[$countLinks] = new NavLinks("CONTATO", "contato.php");
         
