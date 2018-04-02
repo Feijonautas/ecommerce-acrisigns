@@ -33,6 +33,22 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
         <script type="text/javascript" src="custom-textarea/ckeditor.js"></script>
         <!--FIM THIS PAGE LINKS-->
         <script>
+            var selecionandoCategoria = false;
+            function checkSubcategorias(idSubcategoria){
+                var startDelay = 200;
+                $(document).ready(function(){
+                    setTimeout(function(){
+                        if(!selecionandoCategoria){
+                            $(".checked-subcategoria-"+idSubcategoria).each(function(){
+                                $(this).prop("checked", true);
+                            });
+                        }else{
+                            checkSubcategorias(idSubcategoria);
+                        }
+                    }, startDelay);
+                });
+            }
+            
             $(document).ready(function(){
                 CKEDITOR.replace("descricaoLonga");
 
@@ -605,30 +621,140 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
     </head>
     <body>
         <?php
-            /*REQUIRE PADRAO*/
+            require_once "pew-system-config.php";
+            require_once "@classe-system-functions.php";
+            require_once "../@classe-produtos.php";
             require_once "header-efectus-web.php";
             require_once "pew-interatividade.php";
-            /*FIM PADRAO*/
-            require_once "pew-system-config.php";
 
             /*SET TABLES*/
+            $tabela_produtos = $pew_custom_db->tabela_produtos;
+            $tabela_imagens_produtos = $pew_custom_db->tabela_imagens_produtos;
             $tabela_categorias = $pew_db->tabela_categorias;
             $tabela_subcategorias = $pew_db->tabela_subcategorias;
-            $tabela_departamentos = $pew_custom_db->tabela_departamentos;
-            $tabela_produtos = $pew_custom_db->tabela_produtos;
+            $tabela_categorias_produtos = $pew_custom_db->tabela_categorias_produtos;
+            $tabela_subcategorias_produtos = $pew_custom_db->tabela_subcategorias_produtos;
+            $tabela_cores = $pew_custom_db->tabela_cores;
             $tabela_marcas = $pew_custom_db->tabela_marcas;
+            $tabela_produtos_relacionados = $pew_custom_db->tabela_produtos_relacionados;
             $tabela_especificacoes = $pew_custom_db->tabela_especificacoes;
+            $tabela_especificacoes_produtos = $pew_custom_db->tabela_especificacoes_produtos;
+            $tabela_departamentos = $pew_custom_db->tabela_departamentos;
+            $tabela_departamentos_produtos = $pew_custom_db->tabela_departamentos_produtos;
             /*END SET TABLES*/
+
+            /*DEFAULT VARS*/
+            $idProduto = isset($_GET["id_produto"]) ? pew_string_format($_GET["id_produto"]) : 0;
+            $dirImagensProdutos = "../imagens/produtos";
+            /*END DEFAULT VARS*/
+
+            /*SET DADOS PRODUTOS*/
+            $totalProduto = $pew_functions->contar_resultados($tabela_produtos, "id = '$idProduto'");
+            if($totalProduto > 0 || $idProduto == 0){
+                if($idProduto != 0){
+                    $produto = new Produtos();
+                    $produto->montar_produto($idProduto);
+                    $infoProduto = $produto->montar_array();
+                    $skuProduto = $infoProduto["sku"];
+                    $nomeProduto = $infoProduto["nome"];
+                    $precoProduto = $infoProduto["preco"];
+                    $precoProduto = pew_number_format($precoProduto);
+                    $precoPromocaoProduto = $infoProduto["preco_promocao"];
+                    $precoPromocaoProduto = pew_number_format($precoPromocaoProduto);
+                    $promocaoAtiva = $infoProduto["promocao_ativa"];
+                    $marcaProduto = $infoProduto["marca"];
+                    $estoqueProduto = $infoProduto["estoque"];
+                    $estoqueBaixoProduto = $infoProduto["estoque_baixo"];
+                    $tempoFabricacaoProduto = $infoProduto["tempo_fabricacao"];
+                    $descricaoCurtaProduto = $infoProduto["descricao_curta"];
+                    $descricaoLongaProduto = $infoProduto["descricao_longa"];
+                    $urlVideoProduto = $infoProduto["url_video"];
+                    $pesoProduto = $infoProduto["peso"];
+                    $comprimentoProduto = $infoProduto["comprimento"];
+                    $larguraProduto = $infoProduto["largura"];
+                    $alturaProduto = $infoProduto["altura"];
+                    $statusProduto = $infoProduto["status"];
+                    $imagensProduto = $infoProduto["imagens"];
+                    $departamentosProduto = $produto->get_departamentos_produto();
+                    $categoriasProduto = $produto->get_categorias_produto();
+                    $subcategoriasProduto = $produto->get_subcategorias_produto();
+                    $especificacoesProduto = $produto->get_especificacoes_produto();
+                    $relacionadosProdutos = $produto->get_relacionados_produto();
+
+                    $selectedDepartamentos = array();
+                    if($departamentosProduto != false){
+                        foreach($departamentosProduto as $infoDepartamento){
+                            $idDepartamento = $infoDepartamento["id"];
+                            $selectedDepartamentos[$idDepartamento] = true;
+                        }
+                    }
+
+                    $selectedCategorias = array();
+                    if($categoriasProduto != false){
+                        foreach($categoriasProduto as $infoCategoria){
+                            $idCategoria = $infoCategoria["id"];
+                            $tituloCategoria = $infoCategoria["titulo"];
+                            $selectedCategorias[$idCategoria] = $tituloCategoria;
+                        }
+                    }
+
+                    $selectedSubcategorias = array();
+                    if($subcategoriasProduto != false){
+                        foreach($subcategoriasProduto as $infoSubcategoria){
+                            $idSubcategoria = $infoSubcategoria["id_subcategoria"];
+                            $idCategoriaMain = $infoSubcategoria["id_categoria"];
+                            $tituloSubcategoria = $infoSubcategoria["titulo"];
+                            $selectedSubcategorias[$idSubcategoria] = $tituloSubcategoria;
+                            echo "<script>$(document).ready(function(){ checkSubcategorias($idSubcategoria); });</script>";
+                        }
+                    }
+
+                    $selectedProdutosRelacionados = array();
+                    $ctrlRelacionados = 0;
+                    if($relacionadosProdutos != false){
+                        foreach($relacionadosProdutos as $infoRelacionados){
+                            $idEspecificacao = $infoEspecificacao["id_relacionado"];
+                            $selectedProdutosRelacionados[$idEspecificacao] = true;
+                            $ctrlRelacionados++;
+                        }
+                    }
+                    /*END SET DADOS PRODUTO*/
+                }else{
+                    $skuProduto = null;
+                    $nomeProduto = null;
+                    $precoProduto = null;
+                    $precoProduto = null;
+                    $precoPromocaoProduto = null;
+                    $precoPromocaoProduto = null;
+                    $promocaoAtiva = null;
+                    $marcaProduto = null;
+                    $estoqueProduto = 1;
+                    $estoqueBaixoProduto = 1;
+                    $tempoFabricacaoProduto = 0;
+                    $descricaoCurtaProduto = null;
+                    $descricaoLongaProduto = null;
+                    $urlVideoProduto = null;
+                    $pesoProduto = null;
+                    $comprimentoProduto = null;
+                    $larguraProduto = null;
+                    $alturaProduto = null;
+                    $statusProduto = 1;
+                    $imagensProduto = null;
+                    $selectedDepartamentos = array();
+                    $selectedCategorias = array();
+                    $selectedSubcategorias = array();
+                    $ctrlRelacionados = 0;
+                    $selectedProdutosRelacionados = array();
+                }
         ?>
         <h1 class="titulos"><?php echo $page_title; ?><a href="pew-produtos.php" class="btn-voltar"><i class="fa fa-arrow-left" aria-hidden="true"></i> Voltar</a></h1>
         <form name="busca_produto"><!--ESTA AQUI APENAS PARA NÃO BUGAR QUANDO DER ENTER NO INPUT BUSCA PRODUTO E TAMBÉM PARA FUNCIONAR O TRIGGER DA TECLA ENTER--></form>
         <section class="conteudo-painel">
             <form id="formCadastraProduto" action="pew-grava-produto.php" method="post" enctype="multipart/form-data">
-                
                 <!--LINHA 1-->
                 <div class="label medium">
                     <h2 class='label-title'>Nome do Produto</h2>
-                    <input type="text" name="nome" id="nome" placeholder="Produto" class="label-input">
+                    <input type="text" name="nome" id="nome" placeholder="Produto" class="label-input" value="<?php echo $nomeProduto;?>">
                 </div>
                 <div class="label xsmall">
                     <h2 class='label-title'>Marca</h2>
@@ -638,11 +764,12 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                             $contarMarcas = mysqli_query($conexao, "select count(id) as total from $tabela_marcas where status = 1");
                             $contagemMarcas = mysqli_fetch_array($contarMarcas);
                             $totalMarcas = $contagemMarcas["total"];
-                            if($totalMarcas > 0){;
+                            if($totalMarcas > 0){
                                 $queryMarcas = mysqli_query($conexao, "select * from $tabela_marcas where status = 1");
                                 while($infoMarcas = mysqli_fetch_array($queryMarcas)){
                                     $nomeMarca = $infoMarcas["marca"];
-                                    echo "<option value='$nomeMarca'>$nomeMarca</option>";
+                                    $selected = $nomeMarca == $marcaProduto ? "selected" : "";
+                                    echo "<option value='$nomeMarca' $selected>$nomeMarca</option>";
                                 }
                             }
                         ?>
@@ -655,15 +782,15 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                 </div>
                 <div class="label xsmall">
                     <h2 class='label-title'>Estoque</h2>
-                    <input type="number" step="any" name="estoque" id="estoque" class="label-input" value="1">
+                    <input type="number" step="any" name="estoque" id="estoque" class="label-input" value="<?php echo $estoqueProduto;?>">
                 </div>
                 <div class="label xsmall">
                     <h2 class='label-title'>Estoque baixo</h2>
-                    <input type="number" step="any" name="estoque_baixo" value="1" id="estoque_baixo" placeholder="Quantidade estoque baixo" class="label-input">
+                    <input type="number" step="any" name="estoque_baixo" value="<?php echo $estoqueBaixoProduto;?>" id="estoque_baixo" placeholder="Quantidade estoque baixo" class="label-input">
                 </div>
                 <div class="label xsmall">
                     <h2 class='label-title'>Fabricação (dias)</h2>
-                    <input type="number" step="any" name="tempo_fabricacao" id="tempo_fabricacao" value="0" placeholder="Tempo em dias" class="label-input">
+                    <input type="number" step="any" name="tempo_fabricacao" id="tempo_fabricacao" value="<?php echo $tempoFabricacaoProduto;?>" placeholder="Tempo em dias" class="label-input">
                 </div>
                 <!--END LINHA 1-->
                 
@@ -671,11 +798,11 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                 <br class="clear">
                 <div class="label half">
                     <h2 class='label-title'>Descrição Curta SEO Google<br>(Recomendado 156 caracteres)</h2>
-                    <textarea placeholder="Descrição do produto" name="descricao_curta" maxlength="180" id="descricaoCurta" class="label-textarea" rows="3"></textarea>
+                    <textarea placeholder="Descrição do produto" name="descricao_curta" maxlength="180" id="descricaoCurta" class="label-textarea" rows="3"><?php echo $descricaoCurtaProduto;?></textarea>
                 </div>
                 <div class="label half">
                     <h2 class='label-title'>Descrição Longa</h2>
-                    <textarea placeholder="Descrição do produto" name="descricao_longa" id="descricaoLonga" class="label-input" rows="5"></textarea>
+                    <textarea placeholder="Descrição do produto" name="descricao_longa" id="descricaoLonga" class="label-input" rows="5"><?php echo $descricaoLongaProduto;?></textarea>
                 </div>
                 <!--END LINHA 2-->
                 <br class="clear">
@@ -684,28 +811,63 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                 <div class="label xsmall">
                     <h2 class='label-title'>Status</h2>
                     <select name="status" class="label-input">
-                        <option value="1">Ativo</option>
-                        <option value="0">Inativo</option>
+                        <?php
+                            $possibleStatus = array(0, 1);
+                            foreach($possibleStatus as $selectStatus){
+                                $nameStatus = $selectStatus == 1 ? "Ativo" : "Inativo";
+                                $selected = $selectStatus == $statusProduto ? "selected" : "";
+                                echo "<option value='$selectStatus' $selected>$nameStatus</option>";
+                            }
+                        ?>
                     </select>
                 </div>
                 <div class="label xsmall">
                     <h2 class='label-title'>Preço</h2>
-                    <input type="number" step="any" name="preco" id="preco" placeholder="Preço" class="label-input" style="margin-top: 10px;">
+                    <input type="number" step="any" name="preco" id="preco" placeholder="Preço" class="label-input" style="margin-top: 10px;" value="<?php echo $precoProduto;?>">
                 </div>
                 <div class="label xsmall">
                     <h2 class='label-title'>Preço promoção</h2>
-                    <input type="number" step="any" name="preco_promocao" id="precoPromocao" placeholder="Preço promocao" class="label-input" style="margin-top: 10px;">
+                    <input type="number" step="any" name="preco_promocao" id="precoPromocao" placeholder="Preço promocao" class="label-input" style="margin-top: 10px;" value="<?php echo $precoPromocaoProduto;?>">
                 </div>
                 <div class="label xsmall">
                     <h2 class='label-title'>Promoção</h2>
                     <select name="promocao_ativa" class="label-input">
-                        <option value="1">Ativa</option>
-                        <option value="0" selected>Inativa</option>
+                        <?php
+                            $possibleStatus = array(0, 1);
+                            foreach($possibleStatus as $selectStatusPromocao){
+                                $nameStatus = $selectStatusPromocao == 1 ? "Ativa" : "Inativa";
+                                $selected = $selectStatusPromocao == $promocaoAtiva ? "selected" : "";
+                                echo "<option value='$selectStatusPromocao' $selected>$nameStatus</option>";
+                            }
+                        ?>
                     </select>
                 </div>
-                <div class="label medium">
+                <div class="label xsmall">
                     <h2 class='label-title'>SKU</h2>
-                    <input type="text" name="sku" id="sku" placeholder="SKU" class="label-input">
+                    <input type="text" name="sku" id="sku" placeholder="SKU" class="label-input" value="<?php echo $skuProduto;?>">
+                </div>
+                <div class="label xsmall">
+                    <h2 class='label-title'>Cor</h2>
+                    <select name="id_cor" id="idCor" class="label-input">
+                        <option value="">- Selecione -</option>
+                        <?php
+                            $condicaoCores = "status = 1";
+                            $totalCores = $pew_functions->contar_resultados($tabela_cores, $condicaoCores);
+                            if($totalCores > 0){
+                                $queryCores = mysqli_query($conexao, "select * from $tabela_cores order by cor asc");
+                                while($infoCores = mysqli_fetch_array($queryCores)){
+                                    $idCor = $infoCores["id"];
+                                    $tituloCor = $infoCores["cor"];
+                                    echo "<option value='$idCor'>$tituloCor</option>";
+                                }
+                            }
+                        ?>
+                    </select>
+                    <?php
+                        if($totalCores == 0){
+                            echo "<h5 style='margin: 0px; margin-top: -6px;'>Nenhum cor cadastrada</h5>";
+                        }
+                    ?>
                 </div>
                 <!--END LINHA 3-->
                 <br class="clear">
@@ -716,14 +878,16 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                         <h3 class="titulo">Selecione os departamentos</h3>
                         <ul class="list-categorias">
                             <?php
-                                $condicaoDepartamento = "true";
-                                $totalDepartamentos = $pew_functions->contar_resultados($tabela_departamentos, $condicaoDepartamento);
-                                if($totalDepartamentos > 0){
-                                    $queryDepartamentos = mysqli_query($conexao, "select departamento, id from $tabela_departamentos where $condicaoDepartamento");
-                                    while($departamentos = mysqli_fetch_array($queryDepartamentos)){
+                                $condicaoDepartamentos = "true";
+                                $totalCategorias = $pew_functions->contar_resultados($tabela_departamentos, $condicaoDepartamentos);
+                                if($totalCategorias > 0){
+                                    $queryCategorias = mysqli_query($conexao, "select departamento, id from $tabela_departamentos where $condicaoDepartamentos");
+                                    while($departamentos = mysqli_fetch_array($queryCategorias)){
                                         $idDepartamento = $departamentos["id"];
                                         $departamento = $departamentos["departamento"];
-                                        echo "<li class='box-categoria'><label><i class='fas fa-folder icone'></i>$departamento<input type='checkbox' value='$idDepartamento' class='check-categorias' name='departamentos[]'></label>";
+                                        $checkedStatus = isset($selectedDepartamentos[$idDepartamento]) ? true : false;
+                                        $checked = $checkedStatus == true ? "checked" : "";
+                                        echo "<li class='box-categoria'><label><i class='fas fa-folder icone'></i>$departamento<input type='checkbox' value='$idDepartamento' class='check-categorias' name='departamentos[]' $checked></label>";
                                         echo "</li>";
                                     }
                                 }else{
@@ -747,14 +911,19 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                                         $categoria = $categorias["categoria"];
                                         $condicaoSubcategorias = "status = 1 and id_categoria = '$idCategoria'";
                                         $totalSubcategorias = $pew_functions->contar_resultados($tabela_subcategorias, $condicaoSubcategorias);
-                                        echo "<li class='box-categoria'><label><i class='fas fa-folder icone'></i>$categoria<input type='checkbox' value='$idCategoria' class='check-categorias' name='categorias[]'></label>";
+                                        $checkedStatus = isset($selectedCategorias[$idCategoria]) ? true : false;
+                                        $checkedCategoria = $checkedStatus == true ? "checked" : "";
+                                        $classeSub = $checkedStatus == true ? "list-subcategorias-active" : "";
+                                        $styleSub = $checkedStatus == true ? "style='display: block;'" : "";
+                                        echo "<li class='box-categoria'><label><i class='fas fa-folder icone'></i>$categoria<input type='checkbox' value='$idCategoria' class='check-categorias' name='categorias[]' $checkedCategoria></label>";
                                         if($totalSubcategorias > 0){
-                                            echo "<ul class='list-subcategorias'>";
+                                            echo "<ul class='list-subcategorias $classeSub' $styleSub>";
                                             $querySubcategorias = mysqli_query($conexao, "select subcategoria, id from $tabela_subcategorias where $condicaoSubcategorias");
                                             while($subcategorias = mysqli_fetch_array($querySubcategorias)){
                                                 $idSubcategoria = $subcategorias["id"];
                                                 $subcategoria = $subcategorias["subcategoria"];
-                                                echo "<li class='box-subcategoria'><label><i class='fas fa-folder icone'></i> $subcategoria<input type='checkbox' value='$subcategoria||$idSubcategoria' class='check-subcategorias' name='subcategorias[]'></label></li>";
+                                                $checkedSub = isset($selectedSubcategorias[$idSubcategoria]) == true ? "checked" : "";
+                                                echo "<li class='box-subcategoria'><label><i class='fas fa-folder icone'></i> $subcategoria<input type='checkbox' value='$subcategoria||$idSubcategoria' class='check-subcategorias' $checkedSub name='subcategorias[]'></label></li>";
                                             }
                                             echo "</ul>";
                                         }
@@ -771,19 +940,19 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                     <h2 align=left style="margin: 0px;">Dimensões (Calculo frete)</h2>
                     <div class="label half">
                         <h2 class="label-title" title="Peso">Peso (kg)</h2>
-                        <input type="number" step="any" name="peso" id="peso" placeholder="Ex: 0.500" class="label-input">
+                        <input type="number" step="any" name="peso" id="peso" placeholder="Ex: 0.500" class="label-input" value="<?php echo $pesoProduto;?>">
                     </div>
                     <div class="label half">
                         <h2 class="label-title" title="Comprimento">Comp. (cm)</h2>
-                        <input type="number" step="any" name="comprimento" id="comprimento" placeholder="Ex: 20" class="label-input">
+                        <input type="number" step="any" name="comprimento" id="comprimento" placeholder="Ex: 20" class="label-input" value="<?php echo $comprimentoProduto;?>">
                     </div>
                     <div class="label half">
                         <h2 class="label-title" title="Largura">Largura (cm)</h2>
-                        <input type="number" step="any" name="largura" id="largura" placeholder="Ex: 20" class="label-input">
+                        <input type="number" step="any" name="largura" id="largura" placeholder="Ex: 20" class="label-input" value="<?php echo $larguraProduto;?>">
                     </div>
                     <div class="label half">
                         <h2 class="label-title" title="Altura">Altura (cm)</h2>
-                        <input type="number" step="any" name="altura" id="altura" placeholder="Ex: 20" class="label-input">
+                        <input type="number" step="any" name="altura" id="altura" placeholder="Ex: 20" class="label-input" value="<?php echo $alturaProduto;?>">
                     </div>
                 </div>
                 <!--END LINHA 4-->
@@ -823,36 +992,44 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                 </div>
                 <div class="label half" align=left>
                     <h2 class="label-title" align=left style="position: relative; top: 25px; margin-bottom: 25px;">Especificações adicionadas:</h2>
-                    <div class="display-especificacoes"><!--ESPECIFICACOES ADICIONADAS--></div>
+                    <div class="display-especificacoes">
+                        <!--ESPECIFICACOES ADICIONADAS-->
+                        <?php
+                            $totalEspecificacoes = isset($especificacoesProduto) ? count($especificacoesProduto) : 0;
+                            if($totalEspecificacoes > 0 && $especificacoesProduto != null){
+                                foreach($especificacoesProduto as $infoEspecificacao){
+                                    $idEspec = $infoEspecificacao["id"];
+                                    $tituloEspec = $infoEspecificacao["titulo"];
+                                    $descricaoEspec = $infoEspecificacao["descricao"];
+                                    $valueInput = $idEspec."|-|".$descricaoEspec;
+                                    echo "<label class='label-especificacao'><b>$tituloEspec: </b> <input type='text' class='input-especificacao' value='$descricaoEspec'><input type='hidden' class='input-ctrl-especificacao' name='especicacao_produto[]' value='$valueInput' pew-id-especificacao='$idEspec'> <a class='btn-excluir-especificacao' title='Excluir especificação'><i class='fa fa-times' aria-hidden='true'></i></a></label>";
+                                }
+                            }
+                        ?>
+                    </div>
                 </div>
                 <!--END LINHA 5-->
                 <br class="clear">
                 <br class="clear">
                 <br class="clear">
                 <br class="clear">
-                <!--LINHA 6-->
-                <div class="label full clear">
-                    <h2 class="label-title">Imagens do produto: (900px : 900px)</h2>
-                    <div class="file-field label small" id="imagem1">
-                        <div class="view"><i class="fa fa-plus" aria-hidden="true"></i></div>
-                        <input type="file" name="imagem[]" id="imagemPrincipal" class="label-input" accept="image/*">
-                        <div class="legenda">Selecione o arquivo</div>
-                    </div>
-                    <div class="file-field label small" id="imagem2">
-                        <div class="view"><i class="fa fa-plus" aria-hidden="true"></i></div>
-                        <input type="file" name="imagem[]" id="imagem2" class="label-input" accept="image/*">
-                        <div class="legenda">Selecione o arquivo</div>
-                    </div>
-                    <div class="file-field label small" id="imagem3">
-                        <div class="view"><i class="fa fa-plus" aria-hidden="true"></i></div>
-                        <input type="file" name="imagem[]" id="imagem3" class="label-input" accept="image/*">
-                        <div class="legenda">Selecione o arquivo</div>
-                    </div>
-                    <div class="file-field label small" id="imagem4">
-                        <div class="view"><i class="fa fa-plus" aria-hidden="true"></i></div>
-                        <input type="file" name="imagem[]" id="imagem4" class="label-input" accept="image/*">
-                        <div class="legenda">Selecione o arquivo</div>
-                    </div>
+                
+                <div class="label full">
+                    <h2 class="label-title">Imagens do produto: (900px : 900px) OBRIGATÓRIO</h2>
+                    <?php
+                        $contarImagens = mysqli_query($conexao, "select count(id) as total_imagens from $tabela_imagens_produtos where id_produto = '$idProduto'");
+                        $contagem = mysqli_fetch_assoc($contarImagens);
+                        $maxImagens = 4;
+                        $selectedImagens = 0;
+                        for($i = $selectedImagens + 1; $i <= $maxImagens; $i++){
+                            echo "<div class='file-field small' id='imagem$i'>";
+                            echo "<div class='view'><i class='fa fa-plus' aria-hidden='true'></i></div>";
+                            echo "<input type='file' name='imagem$i' accept='image/*'>";
+                            echo "<div class='legenda'>Selecione o arquivo</div>";
+                            echo "</div>";
+                        }
+                        echo "<input type='hidden' name='maximo_imagens' value='$maxImagens'>";
+                    ?>
                 </div>
                 <!--END LINHA 6-->
                 <br style="clear: both;">
@@ -862,12 +1039,12 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                 <!--LINHA 7-->
                 <div class="label half" align="left">
                     <h3 class="label-title">Iframe Vídeo</h3>
-                    <input type="text" class="label-input" name="url_video" placeholder="<iframe></iframe>">
+                    <input type="text" class="label-input" name="url_video" placeholder="<iframe></iframe>" value="<?php echo $urlVideoProduto; ?>">
                 </div>
                 <div class="half" align=left>
                     <!--PRODUTOS RELACIONADOS-->
                     <h3 class="label-title">Produtos Relacionados</h3>
-                    <a class="btn-produtos-relacionados">Produtos Selecionados (0)</a>
+                    <a class="btn-produtos-relacionados">Produtos Selecionados <?php echo "(".$ctrlRelacionados.")";?></a>
                     <div class="display-produtos-relacionados">
                         <div class="header-relacionados">
                             <h3 class="title-relacionados">Produtos relacionados</h3>
@@ -881,11 +1058,23 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                             </div>
                             <div class="lista-relacionados-msg"><h4>Exibindo todos os produtos:</h4><a class="link-padrao limpar-todos-relacionados" title="Limpar todos os produtos listados abaixo e que foram selecionados">Limpar todos</a></div>
                         <?php
-                            $queryAllProdutos = mysqli_query($conexao, "select id, nome from $tabela_produtos where status = 1 order by nome asc");
-                            while($infoRelacionados = mysqli_fetch_array($queryAllProdutos)){
-                                $idProdutoRelacionado = $infoRelacionados["id"];
-                                $nomeProdutoRelacionado = $infoRelacionados["nome"];
-                                echo "<label class='label-relacionados'><input type='checkbox' name='produtos_relacionados[]' value='$idProdutoRelacionado'> $nomeProdutoRelacionado</label>";
+                            $condicaoRelacionados = "id != '$idProduto' and status = 1";
+                            $totalRelacionados = $pew_functions->contar_resultados($tabela_produtos, $condicaoRelacionados);
+                            if($totalRelacionados > 0){
+                                $queryAllProdutos = mysqli_query($conexao, "select id, nome from $tabela_produtos where $condicaoRelacionados order by nome asc");
+                                while($infoRelacionados = mysqli_fetch_array($queryAllProdutos)){
+                                    $idProdutoRelacionado = $infoRelacionados["id"];
+                                    $nomeProdutoRelacionado = $infoRelacionados["nome"];
+                                    $checked = "";
+                                    foreach($selectedProdutosRelacionados as $prodRelacionado){
+                                        if($idProdutoRelacionado == $prodRelacionado){
+                                            $checked = "checked";
+                                        }
+                                    }
+                                    echo "<label class='label-relacionados'><input type='checkbox' name='produtos_relacionados[]' value='$idProdutoRelacionado' $checked> $nomeProdutoRelacionado</label>";
+                                }
+                            }else{
+                                echo "<h4 class='full'>Nenhum produto encontrado</h4>";
                             }
                         ?>
                         </div>
@@ -909,6 +1098,9 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
     </body>
 </html>
 <?php
+            }else{
+                echo "<h3 align='center'>Nenhum produto foi encontrado. <a href='pew-produtos.php' class='link-padrao'>Voltar.</a></h3>";
+            }
 }else{
     header("location: index.php?msg=Área Restrita. É necessário fazer login para continuar.");
 }

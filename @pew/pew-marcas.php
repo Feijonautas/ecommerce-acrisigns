@@ -183,7 +183,7 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                             $idMarca = $marca["id"];
                             $nomeMarca = $marca["marca"];
                             $ctrlQtdCategorias++;
-                            echo "<div class='box-categoria' pew-id-marca='$idMarca' pew-titulo-marca='$nomeMarca'>";
+                            echo "<div class='box-categoria' pew-id-marca='$idMarca' style='height: 20px;' pew-titulo-marca='$nomeMarca'>";
                                 echo "<h3 class='alter-button-box-categoria' pew-id-marca='$idMarca' pew-titulo-marca='$nomeMarca'>".$iconCategorias." ".$nomeMarca."</h3>";
                             echo "</div>";
                         }

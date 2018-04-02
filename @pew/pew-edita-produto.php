@@ -746,6 +746,8 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
     <body>
         <?php
             require_once "pew-system-config.php";
+            require_once "@classe-system-functions.php";
+            require_once "../@classe-produtos.php";
             require_once "header-efectus-web.php";
             require_once "pew-interatividade.php";
         ?>
@@ -759,6 +761,7 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
             $tabela_categorias_produtos = $pew_custom_db->tabela_categorias_produtos;
             $tabela_subcategorias_produtos = $pew_custom_db->tabela_subcategorias_produtos;
             $tabela_marcas = $pew_custom_db->tabela_marcas;
+            $tabela_cores = $pew_custom_db->tabela_cores;
             $tabela_produtos_relacionados = $pew_custom_db->tabela_produtos_relacionados;
             $tabela_especificacoes = $pew_custom_db->tabela_especificacoes;
             $tabela_especificacoes_produtos = $pew_custom_db->tabela_especificacoes_produtos;
@@ -768,16 +771,15 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
 
             /*DEFAULT VARS*/
             $idProduto = isset($_GET["id_produto"]) ? pew_string_format($_GET["id_produto"]) : 0;
-            $dirImagensProdutos = "../imagens/produtos/";
+            $dirImagensProdutos = "../imagens/produtos";
             /*END DEFAULT VARS*/
 
             /*SET DADOS PRODUTOS*/
-            /*SET DADOS PRODUTOS*/
-            $contarProduto = mysqli_query($conexao, "select count(id) as total_produto from $tabela_produtos where id = '$idProduto'");
-            $contagem = mysqli_fetch_assoc($contarProduto);
-            if($contagem["total_produto"] > 0){
-                $queryProduto = mysqli_query($conexao, "select * from $tabela_produtos where id = '$idProduto'");
-                $infoProduto = mysqli_fetch_array($queryProduto);
+            $totalProduto = $pew_functions->contar_resultados($tabela_produtos, "id = '$idProduto'");
+            if($totalProduto > 0){
+                $produto = new Produtos();
+                $produto->montar_produto($idProduto);
+                $infoProduto = $produto->montar_array();
                 $skuProduto = $infoProduto["sku"];
                 $nomeProduto = $infoProduto["nome"];
                 $precoProduto = $infoProduto["preco"];
@@ -786,6 +788,7 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                 $precoPromocaoProduto = pew_number_format($precoPromocaoProduto);
                 $promocaoAtiva = $infoProduto["promocao_ativa"];
                 $marcaProduto = $infoProduto["marca"];
+                $idCorProduto = $infoProduto["id_cor"];
                 $estoqueProduto = $infoProduto["estoque"];
                 $estoqueBaixoProduto = $infoProduto["estoque_baixo"];
                 $tempoFabricacaoProduto = $infoProduto["tempo_fabricacao"];
@@ -797,51 +800,54 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                 $larguraProduto = $infoProduto["largura"];
                 $alturaProduto = $infoProduto["altura"];
                 $statusProduto = $infoProduto["status"];
-                $contarCategoriasProduto = mysqli_query($conexao, "select count(id) as total_categorias from $tabela_categorias_produtos where id_produto = '$idProduto'");
-                $contagem = mysqli_fetch_assoc($contarCategoriasProduto);
-                $totalCatProd = $contagem["total_categorias"];
+                $imagensProduto = $infoProduto["imagens"];
+                $departamentosProduto = $produto->get_departamentos_produto();
+                $categoriasProduto = $produto->get_categorias_produto();
+                $subcategoriasProduto = $produto->get_subcategorias_produto();
+                $especificacoesProduto = $produto->get_especificacoes_produto();
+                $relacionadosProdutos = $produto->get_relacionados_produto();
+                
                 $selectedDepartamentos = array();
-                if($totalCatProd > 0){
-                    $queryDepartamentos = mysqli_query($conexao, "select id_departamento, id_produto from $tabela_departamentos_produtos where id_produto = '$idProduto'");
-                    while($departamentosProduto = mysqli_fetch_array($queryDepartamentos)){
-                        $idDepartamento = $departamentosProduto["id_departamento"];
-                        $selectedDepartamentos[$idDepartamento] = $departamentosProduto["id_produto"];
+                if($departamentosProduto != false){
+                    foreach($departamentosProduto as $infoDepartamento){
+                        $idDepartamento = $infoDepartamento["id"];
+                        $selectedDepartamentos[$idDepartamento] = true;
                     }
                 }
+                
                 $selectedCategorias = array();
-                if($totalCatProd > 0){
-                    $queryCategorias = mysqli_query($conexao, "select id_categoria, titulo_categoria from $tabela_categorias_produtos where id_produto = '$idProduto'");
-                    while($categoriasProduto = mysqli_fetch_array($queryCategorias)){
-                        $idCategoria = $categoriasProduto["id_categoria"];
-                        $selectedCategorias[$idCategoria] = $categoriasProduto["titulo_categoria"];
+                if($categoriasProduto != false){
+                    foreach($categoriasProduto as $infoCategoria){
+                        $idCategoria = $infoCategoria["id"];
+                        $tituloCategoria = $infoCategoria["titulo"];
+                        $selectedCategorias[$idCategoria] = $tituloCategoria;
                     }
                 }
-                $contarSubcategoriasProduto = mysqli_query($conexao, "select count(id) as total_subcategorias from $tabela_subcategorias_produtos where id_produto = '$idProduto'");
-                $contagem = mysqli_fetch_assoc($contarSubcategoriasProduto);
-                $totalSubcatProd = $contagem["total_subcategorias"];
+                
                 $selectedSubcategorias = array();
-                if($totalSubcatProd > 0){
-                    $querySubcategorias = mysqli_query($conexao, "select id_categoria, id_subcategoria, titulo_subcategoria from $tabela_subcategorias_produtos where id_produto = '$idProduto'");
-                    while($subcategoriaProduto = mysqli_fetch_array($querySubcategorias)){
-                        $idCat = $subcategoriaProduto["id_categoria"];
-                        $idSubcategoria = $subcategoriaProduto["id_subcategoria"];
-                        $tituloSubcategoria = $subcategoriaProduto["titulo_subcategoria"];
+                if($subcategoriasProduto != false){
+                    foreach($subcategoriasProduto as $infoSubcategoria){
+                        $idSubcategoria = $infoSubcategoria["id_subcategoria"];
+                        $idCategoriaMain = $infoSubcategoria["id_categoria"];
+                        $tituloSubcategoria = $infoSubcategoria["titulo"];
                         $selectedSubcategorias[$idSubcategoria] = $tituloSubcategoria;
                         echo "<script>$(document).ready(function(){ checkSubcategorias($idSubcategoria); });</script>";
                     }
                 }
+                
                 $selectedProdutosRelacionados = array();
                 $ctrlRelacionados = 0;
-                $condicao_relacionados = "id_produto = '$idProduto'";
-                $queryProdRelacionados = mysqli_query($conexao, "select * from $tabela_produtos_relacionados where $condicao_relacionados");
-                while($infoRelacionados = mysqli_fetch_array($queryProdRelacionados)){
-                    $idSelectedRelacionado = $infoRelacionados["id_relacionado"];
-                    $selectedProdutosRelacionados[$ctrlRelacionados] = $idSelectedRelacionado;
-                    $ctrlRelacionados++;
+                if($relacionadosProdutos != false){
+                    foreach($relacionadosProdutos as $infoRelacionados){
+                        $idRelacionado = $infoRelacionados["id_relacionado"];
+                        $selectedProdutosRelacionados[$idRelacionado] = true;
+                        $ctrlRelacionados++;
+                    }
                 }
+                /*END SET DADOS PRODUTO*/
         ?>
         <section class="conteudo-painel">
-            <form id="formAtualizaProduto" method="post" action="pew-update-produto.php" enctype="multipart/form-data">
+            <form id="formAtualizaProduto" name="formulario_cadastro" method="post" action="pew-update-produto.php" enctype="multipart/form-data">
                 <input type="hidden" name="id_produto" value="<?php echo $idProduto;?>" id="idProduto">
                 <!--LINHA 1-->
                 <div class="label medium">
@@ -934,9 +940,33 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                         ?>
                     </select>
                 </div>
-                <div class="label medium">
+                <div class="label xsmall">
                     <h2 class='label-title'>SKU</h2>
                     <input type="text" name="sku" id="sku" placeholder="SKU" class="label-input" value="<?php echo $skuProduto;?>">
+                </div>
+                <div class="label xsmall">
+                    <h2 class='label-title'>Cor</h2>
+                    <select name="id_cor" id="idCor" class="label-input">
+                        <option value="">- Selecione -</option>
+                        <?php
+                            $condicaoCores = "status = 1";
+                            $totalCores = $pew_functions->contar_resultados($tabela_cores, $condicaoCores);
+                            if($totalCores > 0){
+                                $queryCores = mysqli_query($conexao, "select * from $tabela_cores order by cor asc");
+                                while($infoCores = mysqli_fetch_array($queryCores)){
+                                    $idCor = $infoCores["id"];
+                                    $tituloCor = $infoCores["cor"];
+                                    $selectedCor = $idCorProduto == $idCor ? "selected" : "";
+                                    echo "<option value='$idCor' $selectedCor>$tituloCor</option>";
+                                }
+                            }
+                        ?>
+                    </select>
+                    <?php
+                        if($totalCores == 0){
+                            echo "<h5 style='margin: 0px; margin-top: -6px;'>Nenhum cor cadastrada</h5>";
+                        }
+                    ?>
                 </div>
                 <!--END LINHA 3-->
                 <br class="clear">
@@ -1064,19 +1094,14 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                     <div class="display-especificacoes">
                         <!--ESPECIFICACOES ADICIONADAS-->
                         <?php
-                            $contar = mysqli_query($conexao, "select count(id) as total from $tabela_especificacoes_produtos where id_produto = '$idProduto'");
-                            $contagem = mysqli_fetch_assoc($contar);
-                            $total = $contagem["total"];
-                            if($total > 0){
-                                $queryEspecProduto = mysqli_query($conexao, "select * from $tabela_especificacoes_produtos where id_produto = '$idProduto'");
-                                while($infoEspec = mysqli_fetch_array($queryEspecProduto)){
-                                    $idEspec = $infoEspec["id_especificacao"];
-                                    $descricao = $infoEspec["descricao"];
-                                    $queryTituloEspec = mysqli_query($conexao, "select titulo from $tabela_especificacoes where id = '$idEspec'");
-                                    $infoTitulo = mysqli_fetch_array($queryTituloEspec);
-                                    $titulo = $infoTitulo["titulo"];
-                                    $ctrlInputVal = $idEspec."|-|".$descricao;
-                                    echo "<label class='label-especificacao'><b>$titulo: </b> <input type='text' class='input-especificacao' value='$descricao'><input type='hidden' class='input-ctrl-especificacao' name='especicacao_produto[]' value='$ctrlInputVal' pew-id-especificacao='$idEspec'> <a class='btn-excluir-especificacao' title='Excluir especificação'><i class='fa fa-times' aria-hidden='true'></i></a></label>";
+                            $totalEspecificacoes = count($especificacoesProduto);
+                            if($totalEspecificacoes > 0 && $especificacoesProduto != null){
+                                foreach($especificacoesProduto as $infoEspecificacao){
+                                    $idEspec = $infoEspecificacao["id"];
+                                    $tituloEspec = $infoEspecificacao["titulo"];
+                                    $descricaoEspec = $infoEspecificacao["descricao"];
+                                    $valueInput = $idEspec."|-|".$descricaoEspec;
+                                    echo "<label class='label-especificacao'><b>$tituloEspec: </b> <input type='text' class='input-especificacao' value='$descricaoEspec'><input type='hidden' class='input-ctrl-especificacao' name='especicacao_produto[]' value='$valueInput' pew-id-especificacao='$idEspec'> <a class='btn-excluir-especificacao' title='Excluir especificação'><i class='fa fa-times' aria-hidden='true'></i></a></label>";
                                 }
                             }
                         ?>
@@ -1089,26 +1114,23 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                 <br class="clear">
                 
                 <div class="label full">
-                    <h2 class="label-title">Imagens do produto: (1200px : 1600px) OBRIGATÓRIO</h2>
+                    <h2 class="label-title">Imagens do produto: (900px : 900px) OBRIGATÓRIO</h2>
                     <?php
                         $contarImagens = mysqli_query($conexao, "select count(id) as total_imagens from $tabela_imagens_produtos where id_produto = '$idProduto'");
                         $contagem = mysqli_fetch_assoc($contarImagens);
                         $maxImagens = 4;
                         $selectedImagens = 0;
-                        if($contagem["total_imagens"] > 0){
-                            $queryImagens = mysqli_query($conexao, "select * from $tabela_imagens_produtos where id_produto = '$idProduto'");
-                            while($imagens = mysqli_fetch_array($queryImagens)){
-                                $selectedImagens++;
-                                $idImagem = $imagens["id"];
-                                $imagem = $imagens["imagem"];
-                                $excludeImage = $selectedImagens > 1 ? "<br><a class='btn-excluir-imagem botao-acao' data-id-produto='$idImagem' data-acao='excluir_imagem'>Excluir imagem</a>" : "";
-                                echo "<div class='file-field imagem-ativa small' id='imagem$selectedImagens' data-id-imagem='$idImagem'>";
-                                echo "<div class='view'><img src='$dirImagensProdutos$imagem' class='preview'></div>";
+                        foreach($imagensProduto as $infoImagem){
+                            $selectedImagens++;
+                            $idImagem = $infoImagem["id_imagem"];
+                            $srcImagem = $infoImagem["src"];
+                            $excludeImage = $selectedImagens > 1 ? "<br><a class='btn-excluir-imagem botao-acao' data-id-produto='$idImagem' data-acao='excluir_imagem'>Excluir imagem</a>" : "";
+                            echo "<div class='file-field imagem-ativa small' id='imagem$selectedImagens' data-id-imagem='$idImagem'>";
+                                echo "<div class='view'><img src='$dirImagensProdutos/$srcImagem' class='preview'></div>";
                                 echo "<input type='file' name='imagem$selectedImagens' accept='image/*' title='Arquivo selecionado'>";
                                 echo "<div class='legenda' style='background-color: limegreen;'>Arquivo selecionado</div><br>";
                                 echo $excludeImage;
-                                echo "</div>";
-                            }
+                            echo "</div>";
                         }
                         for($i = $selectedImagens + 1; $i <= $maxImagens; $i++){
                             echo "<div class='file-field small' id='imagem$i'>";
@@ -1147,17 +1169,23 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                             </div>
                             <div class="lista-relacionados-msg"><h4>Exibindo todos os produtos:</h4><a class="link-padrao limpar-todos-relacionados" title="Limpar todos os produtos listados abaixo e que foram selecionados">Limpar todos</a></div>
                         <?php
-                            $queryAllProdutos = mysqli_query($conexao, "select id, nome from $tabela_produtos where status = 1 order by nome asc");
-                            while($infoRelacionados = mysqli_fetch_array($queryAllProdutos)){
-                                $idProdutoRelacionado = $infoRelacionados["id"];
-                                $nomeProdutoRelacionado = $infoRelacionados["nome"];
-                                $checked = "";
-                                foreach($selectedProdutosRelacionados as $prodRelacionado){
-                                    if($idProdutoRelacionado == $prodRelacionado){
-                                        $checked = "checked";
+                            $condicaoRelacionados = "id != '$idProduto' and status = 1";
+                            $totalRelacionados = $pew_functions->contar_resultados($tabela_produtos, $condicaoRelacionados);
+                            if($totalRelacionados > 0){
+                                $queryAllProdutos = mysqli_query($conexao, "select id, nome from $tabela_produtos where $condicaoRelacionados order by nome asc");
+                                while($infoRelacionados = mysqli_fetch_array($queryAllProdutos)){
+                                    $idProdutoRelacionado = $infoRelacionados["id"];
+                                    $nomeProdutoRelacionado = $infoRelacionados["nome"];
+                                    $checked = "";
+                                    foreach($selectedProdutosRelacionados as $prodRelacionado){
+                                        if($idProdutoRelacionado == $prodRelacionado){
+                                            $checked = "checked";
+                                        }
                                     }
+                                    echo "<label class='label-relacionados'><input type='checkbox' name='produtos_relacionados[]' value='$idProdutoRelacionado' $checked> $nomeProdutoRelacionado</label>";
                                 }
-                                echo "<label class='label-relacionados'><input type='checkbox' name='produtos_relacionados[]' value='$idProdutoRelacionado' $checked> $nomeProdutoRelacionado</label>";
+                            }else{
+                                echo "<h4 class='full'>Nenhum produto encontrado</h4>";
                             }
                         ?>
                         </div>
@@ -1176,16 +1204,21 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                 
                 <div class="label full jc-center">
                     <div class="small">
-                        <input type='button' class='btn-excluir botao-acao label-input' data-id-produto='<?php echo $idProduto; ?>' data-acao='excluir' value='Excluir produto'>
+                        <button type='button' class='btn-excluir botao-acao label-input' data-id-produto='<?php echo $idProduto; ?>' data-acao='excluir'><i class="fas fa-trash-alt"></i> Excluir produto</button>
                     </div>
                     <div class="small">
                     <?php
-                        $botao = $statusProduto == 1 ? "<input type='button' class='btn-excluir botao-acao label-input' data-id-produto='$idProduto' data-acao='desativar' value='Desativar produto'>" : "<input type='button' class='btn-submit botao-acao label-input' data-id-produto='$idProduto' data-acao='ativar' value='Ativar produto'>";
+                        $botao = $statusProduto == 1 ? "<button type='button' class='btn-excluir botao-acao label-input' data-id-produto='$idProduto' data-acao='desativar'><i class='fas fa-power-off'></i> Desativar produto</button>" : "<button type='button' class='btn-submit botao-acao label-input' data-id-produto='$idProduto' data-acao='ativar'><i class='fas fa-power-off'></i> Ativar produto</button>";
                         echo $botao;
                     ?>
                     </div>
                     <div class="small">
-                        <input type="submit" class="btn-submit label-input" value="Salvar Alterações">
+                        <a href="pew-cadastra-produto.php?id_produto=<?php echo $idProduto;?>" class="btn-submit label-input" style="display: block; font-size: 18px; line-height: 40px; height: 36px;"><i class="fas fa-plus"></i> Clonar produto</a>
+                    </div>
+                    <div class="small">
+                        <button type="submit" class="btn-submit label-input">
+                            <i class="far fa-save"></i> Salvar
+                        </button>
                     </div>
                 </div>
                 <br><br>

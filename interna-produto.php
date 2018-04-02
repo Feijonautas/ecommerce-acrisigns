@@ -426,7 +426,8 @@
                     <?php
                         $ctrlImagens = 0;
                         $imagemPrincipal = null;
-                        foreach($imagensProduto as $srcImagem){
+                        foreach($imagensProduto as $infoImagem){
+                            $srcImagem = $infoImagem["src"];
                             $ctrlImagens++;
                             $imagemPrincipal = $ctrlImagens == 1 ? $srcImagem : $imagemPrincipal;
                             echo "<div class='box-miniaturas'><img src='$dirImagensProduto/$srcImagem' alt='$nomeEmpresa - $nomeProduto - Imagem $ctrlImagens' class='miniatura'></div>";
@@ -478,6 +479,7 @@
         }else{
             echo "<h3 class='mensagem-no-result'><i class='fas fa-search'></i> Nenhum produto foi encontrado</h3>";
             echo "<br><center><a href='index.php' class='link-padrao' align=center>Voltar a página inicial</a></center>";
+            echo "</div>";
         }
         ?>
         <!--END THIS PAGE CONTENT-->

@@ -9,8 +9,8 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
     $efectus_empresa_administrativo = $_SESSION[$name_session_empresa];
     $efectus_user_administrativo = $_SESSION[$name_session_user];
     $efectus_nivel_administrativo = $_SESSION[$name_session_nivel];
-    $navigation_title = "Categoria destaque - $efectus_empresa_administrativo";
-    $page_title = "Gerenciamento da Categoria Destaque";
+    $navigation_title = "Categorias destaque - $efectus_empresa_administrativo";
+    $page_title = "Gerenciamento das Categorias Destaque";
 ?>
 <!DOCTYPE html>
 <html>
@@ -185,7 +185,7 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                 echo "<script>$(document).ready(function(){ destaqueFocus('$focus'); })</script>";
             }
         ?>
-        <h1 class="titulos"><?php echo $page_title; ?><a href="pew-vitrine.php" class="btn-voltar"><i class="fa fa-arrow-left" aria-hidden="true"></i> Voltar</a></h1>
+        <h1 class="titulos"><?php echo $page_title; ?></a></h1>
         <section class="conteudo-painel">
             <center><a class="btn-padrao btn-add-categoria" title="Adicionar categoria a vitrine">Adicionar categoria destaque</a></center>
             <div class='painel-categorias'>

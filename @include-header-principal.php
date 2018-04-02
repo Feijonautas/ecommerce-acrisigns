@@ -13,7 +13,7 @@
     .header-principal .nav-header{
         position: relative;
         z-index: 80;
-        width: 100%;
+        width: 90%;
     }
     /*END TOP BAR CART AND LOGIN CSS*/
     .header-principal .nav-header .top-bar{
@@ -34,8 +34,8 @@
         -webkit-box-align: center;
         -ms-flex-align: center;
         align-items: center;
-        background-color: #222;
-        color: #fff;
+        background-color: #fff;
+        border-bottom: 1px solid #dedede;
         z-index: 80;
     }
     .header-principal .nav-header .top-bar .link-padrao{
@@ -44,10 +44,11 @@
         -o-transition: .2s;
         transition: .2s;
         cursor: pointer;
-        color: #8ad20c;
+        color: #666;
     }
     .header-principal .nav-header .top-bar .link-padrao:hover{
-        color: #fff;
+        color: #111;
+        border-color: #111;
     }
     .header-principal .nav-header .top-bar .header-cart{
         position: relative;
@@ -245,7 +246,6 @@
         display: -ms-flexbox;
         display: flex;
         z-index: 1;
-        background-color: #111;
     }
     .header-principal .nav-header .top-nav .search-field{
         width: 30%;
@@ -254,7 +254,7 @@
         display: flex;
         -webkit-box-pack: start;
         -ms-flex-pack: start;
-        justify-content: center;
+        justify-content: flex-start;
         -webkit-box-align: center;
         -ms-flex-align: center;
         align-items: center;
@@ -265,6 +265,7 @@
         -webkit-transition: .3s;
         -o-transition: .3s;
         transition: .3s;
+        background-color: #333;
     }
     .header-principal .nav-header .top-nav .search-field .form-focused{
         width: 100%;
@@ -279,26 +280,23 @@
         -webkit-transition: .3s;
         -o-transition: .3s;
         transition: .3s;
-        border-radius: 30px;
     }
     .header-principal .nav-header .top-nav .search-field .search-submit{
         position: absolute;
         border: none;
         width: 40px;
-        height: 40px;
-        background-color: transparent;
-        top: -5px;
+        height: 28px;
+        background-color: rgba(255, 255, 255, 0.5);
+        top: 1px;
         right: 1px;
         cursor: pointer;
         -webkit-transition: .2s;
         -o-transition: .2s;
         transition: .2s;
-        border-radius: 50%;
-        outline: none;
     }
     .header-principal .nav-header .top-nav .search-field .search-submit:hover{
-        background-color: #eee;
-        color: #111;
+        background-color: #111;
+        color: #fff;
     }
     .header-principal .nav-header .top-nav .logo-header{
         width: 40%;
@@ -314,7 +312,7 @@
         text-align: center;
     }
     .header-principal .nav-header .top-nav .logo-header img{
-        width: 65%;
+        width: 45%;
         -webkit-transition: .2s;
         -o-transition: .2s;
         transition: .2s;
@@ -330,7 +328,7 @@
         display: flex;
         -webkit-box-pack: end;
         -ms-flex-pack: end;
-        justify-content: center;
+        justify-content: flex-end;
         -webkit-box-align: center;
         -ms-flex-align: center;
         align-items: center;
@@ -350,16 +348,16 @@
         transition: .2s;
     }
     .header-principal .nav-header .top-nav .social-media-field .facebook{
-        border: 1px solid #fff;
-        color: #fff;
+        border: 1px solid #4267b2;
+        color: #4267b2;
     }
     .header-principal .nav-header .top-nav .social-media-field .facebook:hover{
         background-color: #4267b2;
         color: #fff;
     }
     .header-principal .nav-header .top-nav .social-media-field .instagram{
-        border: 1px solid #fff;
-        color: #fff;
+        border: 1px solid #cd486b;
+        color: #cd486b;
     }
     .header-principal .nav-header .top-nav .social-media-field .instagram:hover{
         background-color: #cd486b;
@@ -395,7 +393,6 @@
         padding: 0px;
         margin: 0px;
         font-size: 14px;
-        color: #fff;
     }
     .display-links::-webkit-scrollbar-button:hover{
         background-color: #AAA;
@@ -492,7 +489,6 @@
         text-decoration: none;
         color: #333;
         font-weight: bold;
-        border-bottom: 1px solid transparent;  
     }
     .header-principal .nav-header .display-links .sub-menu{
         background-color: #f6f6f6;
@@ -506,15 +502,12 @@
         transition: .2s;
         visibility: hidden;
         opacity: 0;
-        -webkit-box-shadow: 0px 0px 32px 2px rgba(0, 0, 0, .15);
-        -moz-box-shadow: 0px 0px 32px 2px rgba(0, 0, 0, .15);
-        box-shadow: 0px 0px 32px 2px rgba(0, 0, 0, .15);
     }
     .header-principal .nav-header .display-links .sub-menu ul{
         list-style: none;
     }
     .header-principal .nav-header .display-links .first-li:hover .link-principal{
-        border-bottom: 1px solid #111;
+        background-color: #f6f6f6;
     }
     .header-principal .nav-header .display-links .first-li:hover .sub-menu{
         opacity: 1;
@@ -801,16 +794,16 @@
 </style>
 <header class="header-principal">
     <?php
-        $dirLogoPrincipal = "imagens/identidadeVisual/logo-acrisigns.png";
+        $dirLogoPrincipal = "imagens/identidadeVisual/logo-bolsa-em-couro.png";
     ?>
     <nav class="nav-header">
         <div class="top-bar">
             <a class="link-padrao botao-entrar" id="botaoEntrar"><i class="fas fa-sign-in-alt" data-fa-transform="grow-6 left-6"></i> ENTRAR</a> OU
             <a class="link-padrao" id="botaoCadastraConta">CRIE SUA CONTA</a>
             <div class="header-cart">
-                <div class="cart-button"><i class="fas fa-shopping-cart"></i></div>
+                <div class="cart-button"><i class="fas fa-shopping-bag"></i></div>
                 <div class="cart-display">
-                    <h4 class="cart-title">Seu carrinho</h4>
+                    <h4 class="cart-title">Sua Bolsa</h4>
                     <div class="display-itens">
                         <div class="cart-item">
                             <span class="item-quantity" title="Alterar quantidade">3x</span> <a href="#" class="item-name">Bolsa Marrom Amerela brilhante</a><span class="item-price">R$ 250.00</span> <button class="remove-button" title="Remover este item"><i class="fas fa-times"></i></button>
@@ -831,7 +824,7 @@
                     <button type="submit" class="search-submit"><i class="fas fa-search"></i></button>
                 </form>
             </div>
-            <div class="logo-header"><a href="index.php"><img src="<?php echo $dirLogoPrincipal;?>" alt="Logo - Acrisigns by Maidi Grey" title="Página Inicial - Acrisigns"></a></div>
+            <div class="logo-header"><a href="index.php"><img src="<?php echo $dirLogoPrincipal;?>" alt="Logo - Bolsas em Couro by Maidi Grey" title="Página Inicial - Bolsas em Couro"></a></div>
             <div class="social-media-field">
                 <a href="#" class="facebook"><i class="fab fa-facebook-f"></i></a>
                 <a href="#" class="instagram"><i class="fab fa-instagram"></i></a>
@@ -1013,8 +1006,9 @@
                                             $infoImagem = mysqli_fetch_array($queryImagemProduto);
                                             $imagem = $infoImagem["imagem"];
                                             $dirImagens = "imagens/produtos/";
-                                            $departamentoLinks[$ctrlDepartamentoLinks]["sublinks"][$ctrlSub]["subsublinks"][$ctrlSubsublinks]["box_destaque"] = array();
-                                            $departamentoLinks[$ctrlDepartamentoLinks]["sublinks"][$ctrlSub]["subsublinks"][$ctrlSubsublinks]["box_destaque"]["imagem"] = $dirImagens.$imagem;
+                                            
+                                            /*$departamentoLinks[$ctrlDepartamentoLinks]["sublinks"][$ctrlSub]["subsublinks"][$ctrlSubsublinks]["box_destaque"] = array();
+                                            $departamentoLinks[$ctrlDepartamentoLinks]["sublinks"][$ctrlSub]["subsublinks"][$ctrlSubsublinks]["box_destaque"]["imagem"] = $dirImagens.$imagem;*/
                                             
                                         }
                                     }
@@ -1035,21 +1029,18 @@
             $link_nav[$countLinks] = new NavLinks($tituloLink, $urlLink);
             $sublinks = isset($link_departamento["sublinks"]) ? $link_departamento["sublinks"] : null;
             $totalSublinks = count($sublinks);
-            
-            if($sublinks != null){
-                foreach($sublinks as $indice => $slink){
-                    $titulo = $slink["titulo"];
-                    $url = $slink["url"];
-                    $subsublinks = isset($slink["subsublinks"]) ? $slink["subsublinks"] : null;
-                    $totalSubsub = count($subsublinks);
-                    $link_nav[$countLinks]->add_sublink($countLinks, $titulo, $url);
-                    if($totalSubsub > 0){
-                        foreach($subsublinks as $sublink){
-                            $tituloSub = $sublink["titulo"];
-                            $urlSub = $sublink["url"];
-                            $boxDestaque = isset($sublink["box_destaque"]) && $sublink["box_destaque"] != "" ? $sublink["box_destaque"] : false;
-                            $link_nav[$countLinks]->add_sub_sublink($countLinks, $tituloSub, $urlSub, $boxDestaque);
-                        }
+            foreach($sublinks as $indice => $slink){
+                $titulo = $slink["titulo"];
+                $url = $slink["url"];
+                $subsublinks = isset($slink["subsublinks"]) ? $slink["subsublinks"] : null;
+                $totalSubsub = count($subsublinks);
+                $link_nav[$countLinks]->add_sublink($countLinks, $titulo, $url);
+                if($totalSubsub > 0){
+                    foreach($subsublinks as $sublink){
+                        $tituloSub = $sublink["titulo"];
+                        $urlSub = $sublink["url"];
+                        $boxDestaque = isset($sublink["box_destaque"]) && $sublink["box_destaque"] != "" ? $sublink["box_destaque"] : false;
+                        $link_nav[$countLinks]->add_sub_sublink($countLinks, $tituloSub, $urlSub, $boxDestaque);
                     }
                 }
             }
@@ -1071,7 +1062,7 @@
             echo "<div class='botao-nav-mobile'><i class='fas fa-bars'></i></div>";
             echo "<div class='nav-background'></div>";
             echo "<ul class='display-links'>";
-            echo "<li class='logo-menu-mobile'><img src='$dirLogoPrincipal'><div class='btn-voltar-menu' alt='Logo - Acrisigns by Maidi Grey'><i class='fas fa-angle-double-left'></i></div></li>";
+            echo "<li class='logo-menu-mobile'><img src='$dirLogoPrincipal'><div class='btn-voltar-menu' alt='Logo - Bolsas em Couro by Maidi Grey'><i class='fas fa-angle-double-left'></i></div></li>";
                 foreach($link_nav as $link){
                     $link->listar_link();
                 }

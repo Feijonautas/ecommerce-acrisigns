@@ -1,6 +1,6 @@
 <h2 class=titulo-edita>Cadastrar categoria</h2>
 <form id='formCadCategoria'>
-    <div class='label full clear'>
+    <div class='label full'>
         <h3 class="label-title">Título</h3>
         <input type='text' class='label-input' placeholder='Título da categoria' name='titulo' id='tituloCategoria' maxlength='35'>
     </div>
