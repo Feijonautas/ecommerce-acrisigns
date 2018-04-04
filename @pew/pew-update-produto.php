@@ -32,9 +32,9 @@
         $marcaProduto = addslashes($_POST["marca"]);
         $idCor = (int)$_POST["id_cor"];
         $precoProduto = $_POST["preco"];
-        $precoProduto = pew_number_format($precoProduto);
+        $precoProduto = $pew_functions->custom_number_format($precoProduto);
         $precoPromocaoProduto = $_POST["preco_promocao"];
-        $precoPromocaoProduto = pew_number_format($precoPromocaoProduto);
+        $precoPromocaoProduto = $pew_functions->custom_number_format($precoPromocaoProduto);
         $promocaoAtiva = intval($_POST["promocao_ativa"]) == 1 ? 1 : 0;
         $estoqueProduto = (int)$_POST["estoque"] != "" ? (int)$_POST["estoque"] : 0;
         $estoqueBaixoProduto = (int)$_POST["estoque_baixo"] != "" ? (int)$_POST["estoque_baixo"] : 1;
@@ -193,7 +193,7 @@
                                 unlink($dirImagensProdutos.$imagem);
                             }
                             
-                            mysqli_query($conexao, "update $tabela_imagens set imagem = '$nomeFinalImagems', status = 1 where id_produto = '$idProduto' and posicao = '$posicao'");
+                            mysqli_query($conexao, "update $tabela_imagens set imagem = '$nomeFinalImagem', status = 1 where id_produto = '$idProduto' and posicao = '$posicao'");
                         }else{
                             mysqli_query($conexao, "insert into $tabela_imagens (id_produto, imagem, posicao, status) values ('$idProduto', '$nomeFinalImagem', '$posicao', 1)");
                         }

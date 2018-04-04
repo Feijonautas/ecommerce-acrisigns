@@ -1,15 +1,14 @@
 <?php
-session_start();
-require_once "pew-system-config.php";
-$name_session_user = $pew_session->name_user;
-$name_session_pass = $pew_session->name_pass;
-$name_session_nivel = $pew_session->name_nivel;
-$name_session_empresa = $pew_session->name_empresa;
-if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) && isset($_SESSION[$name_session_nivel]) && isset($_SESSION[$name_session_empresa])){
-    $efectus_empresa_administrativo = $_SESSION[$name_session_empresa];
-    $efectus_user_administrativo = $_SESSION[$name_session_user];
-    $efectus_nivel_administrativo = $_SESSION[$name_session_nivel];
-    $navigation_title = "Produtos - $efectus_empresa_administrativo";
+    session_start();
+    
+    $thisPageURL = substr($_SERVER["REQUEST_URI"], strpos($_SERVER["REQUEST_URI"], '@pew'));
+    $_POST["next_page"] = str_replace("@pew/", "", $thisPageURL);
+    $_POST["invalid_levels"] = array(1);
+    
+    require_once "@link-important-functions.php";
+    require_once "@valida-sessao.php";
+
+    $navigation_title = "Produtos - " . $pew_session->empresa;
     $page_title = "Gerenciamento de Produtos";
 ?>
 <!DOCTYPE html>
@@ -21,15 +20,12 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
         <meta name="description" content="Acesso Restrito. Efectus Web.">
         <meta name="author" content="Efectus Web">
         <title><?php echo $navigation_title; ?></title>
-        <!--LINKS e JS PADRAO-->
-        <link type="image/png" rel="icon" href="imagens/sistema/identidadeVisual/icone-efectus-web.png">
-        <link type="text/css" rel="stylesheet" href="css/estilo.css">
-        <script type="text/javascript" src="js/jquery.min.js"></script>
-        <script type="text/javascript" src="js/standard.js"></script>
-        <!--FIM LINKS e JS PADRAO-->
-        <!--THIS PAGE LINKS-->
+        <?php
+            require_once "@link-standard-styles.php";
+            require_once "@link-standard-scripts.php";
+        ?>
         <script type="text/javascript" src="js/produtos.js"></script>
-        <!--FIM THIS PAGE LINKS-->
+        
         <!--THIS PAGE CSS-->
         <style>
             .lista-produtos{
@@ -59,6 +55,9 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                 width: 100%;
                 background-color: #fff;
                 border-bottom: 1px solid #ccc;
+            }
+            .box-produto .imagem:hover{
+                opacity: .9;   
             }
             .box-produto .imagem img{
                 width: 100%;
@@ -137,10 +136,13 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
     </head>
     <body>
         <?php
-            require_once "pew-system-config.php";
-            require_once "header-efectus-web.php";
-            require_once "pew-interatividade.php";
+            // STANDARD REQUIRE
+            require_once "@include-body.php";
+            if(isset($block_level) && $block_level == true){
+                $pew_session->block_level();
+            }
         ?>
+        <!--PAGE CONTENT-->
         <h1 class="titulos"><?php echo $page_title; ?></h1>
             <section class="conteudo-painel">
             <div class="group clear">
@@ -196,7 +198,7 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                     $selectedProds = array();
                     $count = 0;
                     function listarProdutos($searchCondition){
-                        global $conexao, $tabela_produtos, $tabela_imagens_produtos, $tabela_categorias, $tabela_subcategorias, $tabela_categorias_produtos, $tabela_subcategorias_produtos, $tabela_departamentos, $tabela_departamentos_produtos;
+                        global $conexao, $tabela_produtos, $tabela_imagens_produtos, $tabela_categorias, $tabela_subcategorias, $tabela_categorias_produtos, $tabela_subcategorias_produtos, $tabela_departamentos, $tabela_departamentos_produtos, $pew_functions;
                         $queryProdutos = mysqli_query($conexao, "select * from $tabela_produtos $searchCondition order by id desc");
                         while($produtos = mysqli_fetch_array($queryProdutos)){
                             $id = $produtos["id"];
@@ -206,7 +208,7 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                             $sku = $produtos["sku"];
                             $data = $produtos["data"];
                             $data = substr($data, 0, 10);
-                            $data = inverterData($data);
+                            $data = $pew_functions->inverter_data($data);
                             $visualizacoes = $produtos["visualizacoes"];
                             $status = $produtos["status"] == 1 ? "Ativo" : "Desativado";
                             $btnStatus = $status == "Ativo" ? "<a class='btn-desativar btn-status-produto' data-produto-id='$id' data-acao='desativar' title='Clique para alterar o status do produto'>Desativar</a>" : "<a class='btn-ativar btn-status-produto' data-produto-id='$id' data-acao='ativar' title='Clique para alterar o status do produto'>Ativar</a>";
@@ -339,8 +341,3 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
         </section>
     </body>
 </html>
-<?php
-}else{
-    header("location: index.php?msg=Área Restrita. É necessário fazer login para continuar.");
-}
-?>

@@ -1,15 +1,14 @@
 <?php
-session_start();
-require_once "pew-system-config.php";
-$name_session_user = $pew_session->name_user;
-$name_session_pass = $pew_session->name_pass;
-$name_session_nivel = $pew_session->name_nivel;
-$name_session_empresa = $pew_session->name_empresa;
-if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) && isset($_SESSION[$name_session_nivel]) && isset($_SESSION[$name_session_empresa])){
-    $efectus_empresa_administrativo = $_SESSION[$name_session_empresa];
-    $efectus_user_administrativo = $_SESSION[$name_session_user];
-    $efectus_nivel_administrativo = $_SESSION[$name_session_nivel];
-    $navigation_title = "Usuários Administrativos - $efectus_empresa_administrativo";
+    session_start();
+    
+    $thisPageURL = substr($_SERVER["REQUEST_URI"], strpos($_SERVER["REQUEST_URI"], '@pew'));
+    $_POST["next_page"] = str_replace("@pew/", "", $thisPageURL);
+    $_POST["invalid_levels"] = array(1, 2);
+    
+    require_once "@link-important-functions.php";
+    require_once "@valida-sessao.php";
+
+    $navigation_title = "Usuários - " . $pew_session->empresa;
     $page_title = "Gerenciamento de Usuários Administrativos";
 ?>
 <!DOCTYPE html>
@@ -21,19 +20,17 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
         <meta name="description" content="Acesso Restrito. Efectus Web.">
         <meta name="author" content="Efectus Web">
         <title><?php echo $navigation_title; ?></title>
-        <!--LINKS e JS PADRAO-->
-        <link type="image/png" rel="icon" href="imagens/sistema/identidadeVisual/icone-efectus-web.png">
-        <link type="text/css" rel="stylesheet" href="css/estilo.css">
-        <script type="text/javascript" src="js/jquery.min.js"></script>
-        <script type="text/javascript" src="js/standard.js"></script>
-        <!--FIM LINKS e JS PADRAO-->
+        <?php
+            require_once "@link-standard-styles.php";
+            require_once "@link-standard-scripts.php";
+        ?>
         <style>
             .display-usuarios{
                 margin-top: 50px;
                 margin-bottom: 50px;
             }
             .box-usuario{
-                width: 500px;
+                width: 50%;
                 height: 35px;
                 line-height: 35px;
                 margin-bottom: 50px;
@@ -45,21 +42,22 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                 font-size: 16px;
                 display: flex;
                 flex-flow: row wrap;
+                line-height: 48px;
             }
             .box-usuario .indice{
                 width: 40px;
+                line-height: 40px;
                 text-align: center;
                 background-color: #111;
                 color: #fff;
                 font-weight: bold;
                 border-top-left-radius: 20px;
                 border-bottom-left-radius: 20px;
-                float: left;
             }
             .box-usuario .name-field{
                 position: relative;
-                width: 300px;
-                float: left;
+                width: 200px;
+                padding: 0px 0px 0px 20px;
                 transition: .2s;
                 border-right: 2px solid #111;
             }
@@ -68,7 +66,6 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
             }
             .box-usuario .nivel-field{
                 position: relative;
-                width: 200px;
                 border-right: 2px solid #111;
                 padding: 0px 20px 0px 20px;
                 transition: .2s;
@@ -78,10 +75,13 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
             }
             .box-usuario .control-field{
                 position: relative;
-                width: 150px;
                 border-top-right-radius: 20px;
                 border-bottom-right-radius: 20px;
+                padding: 0px 0px 0px 20px;
                 transition: .2s;
+            }
+            .box-usuario .control-field .btn-editar{
+                font-size: 16px;   
             }
             .box-usuario .control-field:hover{
                 background-color: #fbfbfb;
@@ -105,11 +105,13 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
     </head>
     <body>
         <?php
-            /*REQUIRE PADRAO*/
-            require_once "header-efectus-web.php";
-            require_once "pew-interatividade.php";
-            /*FIM PADRAO*/
+            // STANDARD REQUIRE
+            require_once "@include-body.php";
+            if(isset($block_level) && $block_level == true){
+                $pew_session->block_level();
+            }
         ?>
+        <!--PAGE CONTENT-->
         <h1 class="titulos">Gerenciamento de Usuários Administrativos</h1>
         <section class="conteudo-painel">
             <div class="group clear">
@@ -171,7 +173,21 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                                     $nivel = "Designer";
                             }
                             $i++;
-                            echo "<div class='box-usuario'><div class='indice'>$i</div><div class='name-field'><h3 class='title'>Usuário</h3>$usuario</div><div class='nivel-field'><h3 class='title'>Nível</h3>$nivel</div><div class='control-field'><h3 class='title'>Editar</h3><a href='pew-edita-usuario.php?id_usuario=$idUsuario' class='btn-editar'><i class='fas fa-edit'></i> Editar</a></div></div>";
+                            echo "<div class='box-usuario'>";
+                                echo "<div class='indice'>$i</div>";
+                                echo "<div class='name-field'>";
+                                    echo "<h3 class='title'>Usuário</h3>";
+                                    echo $usuario;
+                                echo "</div>";
+                                echo "<div class='nivel-field'>";
+                                    echo "<h3 class='title'>Nível</h3>";
+                                    echo $nivel;
+                                echo "</div>";
+                                echo "<div class='control-field'>";
+                                    echo "<h3 class='title'>Editar</h3>";
+                                    echo "<a href='pew-edita-usuario.php?id_usuario=$idUsuario' class='btn-editar'><i class='fas fa-edit'></i> Editar</a>";
+                                echo "</div>";
+                            echo "</div>";
                         }
                         echo "</div>";
                     }else{
@@ -182,9 +198,3 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
         </section>
     </body>
 </html>
-<?php
-    mysqli_close($conexao);
-}else{
-    header("location: index.php?msg=Área Restrita. É necessário fazer login para continuar.");
-}
-?>

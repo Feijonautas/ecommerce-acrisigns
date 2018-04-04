@@ -1,15 +1,14 @@
 <?php
-session_start();
-require_once "pew-system-config.php";
-$name_session_user = $pew_session->name_user;
-$name_session_pass = $pew_session->name_pass;
-$name_session_nivel = $pew_session->name_nivel;
-$name_session_empresa = $pew_session->name_empresa;
-if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) && isset($_SESSION[$name_session_nivel]) && isset($_SESSION[$name_session_empresa])){
-    $efectus_empresa_administrativo = $_SESSION[$name_session_empresa];
-    $efectus_user_administrativo = $_SESSION[$name_session_user];
-    $efectus_nivel_administrativo = $_SESSION[$name_session_nivel];
-    $navigation_title = "Cores - $efectus_empresa_administrativo";
+    session_start();
+    
+    $thisPageURL = substr($_SERVER["REQUEST_URI"], strpos($_SERVER["REQUEST_URI"], '@pew'));
+    $_POST["next_page"] = str_replace("@pew/", "", $thisPageURL);
+    $_POST["invalid_levels"] = array(1);
+    
+    require_once "@link-important-functions.php";
+    require_once "@valida-sessao.php";
+
+    $navigation_title = "Cores - " . $pew_session->empresa;
     $page_title = "Gerenciamento de Cores";
 ?>
 <!DOCTYPE html>
@@ -21,15 +20,10 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
         <meta name="description" content="Acesso Restrito. Efectus Web.">
         <meta name="author" content="Efectus Web">
         <title><?php echo $navigation_title; ?></title>
-        <!--LINKS e JS PADRAO-->
-        <link type="image/png" rel="icon" href="imagens/sistema/identidadeVisual/icone-efectus-web.png">
-        <link type="text/css" rel="stylesheet" href="css/estilo.css">
-        <link type="text/css" rel="stylesheet" href="css/categorias.css">
-        <script type="text/javascript" src="js/jquery.min.js"></script>
-        <script type="text/javascript" src="js/standard.js"></script>
-        <!--FIM LINKS e JS PADRAO-->
-        <!--THIS PAGE LINKS-->
-        <!--FIM THIS PAGE LINKS-->
+        <?php
+            require_once "@link-standard-styles.php";
+            require_once "@link-standard-scripts.php";
+        ?>
         <script>
             var filaAtiva = false;
             var cadastrando = false;
@@ -151,12 +145,11 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
     </head>
     <body>
         <?php
-            /*REQUIRE PADRAO*/
-            require_once "header-efectus-web.php";
-            require_once "pew-interatividade.php";
-            require_once "pew-system-config.php";
-            require_once "@classe-system-functions.php";
-            /*FIM PADRAO*/
+            // STANDARD REQUIRE
+            require_once "@include-body.php";
+            if(isset($block_level) && $block_level == true){
+                $pew_session->block_level();
+            }
             
             /*SET TABLES*/
             $tabela_cores = $pew_custom_db->tabela_cores;
@@ -167,11 +160,13 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                 echo "<script>$(document).ready(function(){ listFocus('$focus'); })</script>";
             }
         ?>
+        <!--PAGE CONTENT-->
         <h1 class="titulos"><?php echo $page_title; ?></h1>
         <section class="conteudo-painel">
-            <a class="btn-padrao btn-cad-categoria" title="Cadastre uma nova cor">Cadastrar nova cor</a>
-            <br><br><br>
-            <div class='painel-categorias'>
+            <div class="full label clear">
+                <a class="btn-flat btn-cad-categoria" title="Cadastre uma nova cor"><i class="fas fa-plus"></i> Cadastrar nova cor</a>
+            </div>
+            <div class='painel-categorias full'>
                 <?php
                     $fileIcon = "<i class='fa fa-folder icone-categorias' aria-hidden='true'></i>";
                     $plusIcon = "<i class='fa fa-plus icone-categorias' aria-hidden='true'></i>";
@@ -221,9 +216,3 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
         </section>
     </body>
 </html>
-<?php
-    mysqli_close($conexao);
-}else{
-    header("location: index.php?msg=Área Restrita. É necessário fazer login para continuar.");
-}
-?>

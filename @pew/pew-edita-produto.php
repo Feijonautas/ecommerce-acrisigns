@@ -1,15 +1,14 @@
 <?php
-session_start();
-require_once "pew-system-config.php";
-$name_session_user = $pew_session->name_user;
-$name_session_pass = $pew_session->name_pass;
-$name_session_nivel = $pew_session->name_nivel;
-$name_session_empresa = $pew_session->name_empresa;
-if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) && isset($_SESSION[$name_session_nivel]) && isset($_SESSION[$name_session_empresa])){
-    $efectus_empresa_administrativo = $_SESSION[$name_session_empresa];
-    $efectus_user_administrativo = $_SESSION[$name_session_user];
-    $efectus_nivel_administrativo = $_SESSION[$name_session_nivel];
-    $navigation_title = "Editar produto - $efectus_empresa_administrativo";
+    session_start();
+    
+    $thisPageURL = substr($_SERVER["REQUEST_URI"], strpos($_SERVER["REQUEST_URI"], '@pew'));
+    $_POST["next_page"] = str_replace("@pew/", "", $thisPageURL);
+    $_POST["invalid_levels"] = array(1);
+    
+    require_once "@link-important-functions.php";
+    require_once "@valida-sessao.php";
+
+    $navigation_title = "Editar produto - " . $pew_session->empresa;
     $page_title = "Editando produto";
 ?>
 <!DOCTYPE html>
@@ -21,17 +20,11 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
         <meta name="description" content="Acesso Restrito. Efectus Web.">
         <meta name="author" content="Efectus Web">
         <title><?php echo $navigation_title; ?></title>
-        <!--LINKS e JS PADRAO-->
-        <link type="image/png" rel="icon" href="imagens/sistema/identidadeVisual/icone-efectus-web.png">
-        <link type="text/css" rel="stylesheet" href="css/estilo.css">
-        <script type="text/javascript" src="js/jquery.min.js"></script>
-        <script type="text/javascript" src="js/standard.js"></script>
-        <script type="text/javascript" src="js/pew.js"></script>
-        <!--FIM LINKS e JS PADRAO-->
-        <!--THIS PAGE LINKS-->
+        <?php
+            require_once "@link-standard-styles.php";
+            require_once "@link-standard-scripts.php";
+        ?>
         <script type="text/javascript" src="js/produtos.js"></script>
-        <script type="text/javascript" src="custom-textarea/ckeditor.js"></script>
-        <!--FIM THIS PAGE LINKS-->
         <script>
             var selecionandoCategoria = false;
             function checkSubcategorias(idSubcategoria){
@@ -745,12 +738,15 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
     </head>
     <body>
         <?php
-            require_once "pew-system-config.php";
-            require_once "@classe-system-functions.php";
+            // STANDARD REQUIRE
+            require_once "@include-body.php";
+            if(isset($block_level) && $block_level == true){
+                $pew_session->block_level();
+            }
+            
             require_once "../@classe-produtos.php";
-            require_once "header-efectus-web.php";
-            require_once "pew-interatividade.php";
         ?>
+        <!--PAGE CONTENT-->
         <h1 class="titulos"><?php echo $page_title; ?><a href="pew-produtos.php" class="btn-voltar"><i class="fa fa-arrow-left" aria-hidden="true"></i> Voltar</a></h1>
         <?php
             /*SET TABLES*/
@@ -770,7 +766,7 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
             /*END SET TABLES*/
 
             /*DEFAULT VARS*/
-            $idProduto = isset($_GET["id_produto"]) ? pew_string_format($_GET["id_produto"]) : 0;
+            $idProduto = isset($_GET["id_produto"]) ? (int)$_GET["id_produto"] : 0;
             $dirImagensProdutos = "../imagens/produtos";
             /*END DEFAULT VARS*/
 
@@ -783,9 +779,9 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                 $skuProduto = $infoProduto["sku"];
                 $nomeProduto = $infoProduto["nome"];
                 $precoProduto = $infoProduto["preco"];
-                $precoProduto = pew_number_format($precoProduto);
+                $precoProduto = $pew_functions->custom_number_format($precoProduto);
                 $precoPromocaoProduto = $infoProduto["preco_promocao"];
-                $precoPromocaoProduto = pew_number_format($precoPromocaoProduto);
+                $precoPromocaoProduto = $pew_functions->custom_number_format($precoPromocaoProduto);
                 $promocaoAtiva = $infoProduto["promocao_ativa"];
                 $marcaProduto = $infoProduto["marca"];
                 $idCorProduto = $infoProduto["id_cor"];
@@ -1222,7 +1218,9 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
                     </div>
                 </div>
                 <br><br>
-                <a href="pew-produtos.php" class="link-padrao">Voltar</a>
+                <div class="full" align=center>
+                    <a href="pew-produtos.php" class="link-padrao">Voltar</a>
+                </div>
             </form>
         </section>
     </body>
@@ -1231,7 +1229,4 @@ if(isset($_SESSION[$name_session_user]) && isset($_SESSION[$name_session_pass]) 
             }else{
                 echo "<h3 align='center'>Nenhum produto foi encontrado. <a href='pew-produtos.php' class='link-padrao'>Voltar.</a></h3>";
             }
-}else{
-    header("location: index.php?msg=Área Restrita. É necessário fazer login para continuar.");
-}
 ?>

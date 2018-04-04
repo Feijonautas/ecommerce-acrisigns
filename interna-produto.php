@@ -161,42 +161,6 @@
             .section-produto .display-info-produto .indisponivel{
                 color: #d11a1a;
             }
-            .section-produto .display-info-produto .display-cores{
-                width: 100%;
-                display: flex;
-                height: 35px;
-                margin: 25px 0px 25px 0px;
-                padding: 0px 0px 10px 0px;
-                overflow: auto;
-                justify-content: flex-end;
-            }
-            .display-cores::-webkit-scrollbar-button:hover{
-                background-color: #AAA;
-            }
-            .display-cores::-webkit-scrollbar-thumb{
-                background-color: #ccc;
-            }
-            .display-cores::-webkit-scrollbar-thumb:hover{
-                background-color: #999;
-            }
-            .display-cores::-webkit-scrollbar-track{
-                background-color: #efefef;
-            }
-            .display-cores::-webkit-scrollbar-track:hover{
-                background-color: #efefef;
-            }
-            .display-cores::-webkit-scrollbar{
-                width: 5px;
-                height: 5px;
-            }
-            .section-produto .display-info-produto .display-cores .box-cor{
-                width: 35px;
-                height: 35px;
-                flex: 0 0 35px;
-                background-color: #eee;
-                margin: 0px 0px 0px 10px;
-                border-radius: 50%;
-            }
             .section-produto .display-info-produto .botao-comprar{
                 border: none;
                 color: #fff;
@@ -257,6 +221,16 @@
                 pointer-events: none;
                 background-color: #ccc;
             }
+			.display-desc{
+				width: 100%;
+				display: flex;
+				justify-content: center;
+				background-color: #ccc;
+				margin-bottom: 100px;
+			}
+			.display-desc .box-desc{
+				width: 50%;
+			}
             @media screen and (max-width: 860px){
                 .main-content{
                     width: 95%;
@@ -384,6 +358,7 @@
 
             /*INFO PRODUTO*/
             $nomeProduto = $infoProduto["nome"];
+            $descricaoLongaProduto = $infoProduto["descricao_longa"];
             $precoProduto = $infoProduto["preco"];
             $precoPromocaoProduto = $infoProduto["preco_promocao"];
             $promocaoAtiva = $infoProduto["promocao_ativa"] == true && $precoPromocaoProduto > 0 && $precoPromocaoProduto < $precoProduto;
@@ -444,6 +419,7 @@
                         echo "<img src='$dirImagensProduto/$imagemPrincipal' alt='$nomeEmpresa - $nomeProduto - Imagem principal' class='imagem-principal'>";
                     ?>
                 </div>
+                
                 <div class="display-info-produto">
                     <h1 class="titulo-produto"><?php echo $nomeProduto; ?></h1>
                     <?php
@@ -451,13 +427,6 @@
                         echo $viewParcelasField;
                         echo $viewDisponibilidadadeField;
                     ?>
-                    <div class="display-cores">
-                        <div class="box-cor"></div>
-                        <div class="box-cor"></div>
-                        <div class="box-cor"></div>
-                        <div class="box-cor"></div>
-                        <div class="box-cor"></div>
-                    </div>
                     <div class="display-comprar">
                         <?php echo $viewBotaoComprar; ?>
                     </div>
@@ -468,6 +437,14 @@
                     </div>
                 </div>
             </section>
+        </div>
+        <div class="display-desc">
+        	<div class="box-desc">
+        		<h3>DESCRIÇÃO E DETALHES</h3>
+        		<?php
+					echo "<p>".$descricaoLongaProduto."</p>";
+				?>
+        	</div>
         </div>
         <section class="produtos-relacionados">
             <?php

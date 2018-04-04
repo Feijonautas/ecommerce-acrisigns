@@ -87,11 +87,12 @@
         </div>
         <div class="main-content">
         <?php
+			$nomeDepartamento = isset($_GET["departamento"]) ? $_GET["departamento"] : "Lorem Ipsum";
             $iconArrow = "<i class='fas fa-angle-right icon'></i>";
-            $navigationTree = "<div class='navigation-tree'><a href='index.php'>Página inicial</a> $iconArrow <a href='#'>Feminino</a></a></div>";
+            $navigationTree = "<div class='navigation-tree'><a href='index.php'>Página inicial</a> $iconArrow <a href='#'>Lorem upsum</a></a></div>";
             echo $navigationTree;
             require_once "@classe-vitrine-produtos.php";
-            $vitrineProdutos[0] = new VitrineProdutos("standard", 20, "<h1>BOLSAS FEMININAS</h1>", "Lorem Ipsum é simplesmente uma simulação de texto da indústria tipográfica e de impressos, e vem sendo utilizado desde o século XVI, quando um impressor desconhecido pegou uma bandeja de tipos e os embaralhou para fazer um livro de modelos de tipos.");
+            $vitrineProdutos[0] = new VitrineProdutos("standard", 20, "<h1 style='text-transform: uppercase;'>$nomeDepartamento</h1>", "Lorem Ipsum é simplesmente uma simulação de texto da indústria tipográfica e de impressos, e vem sendo utilizado desde o século XVI, quando um impressor desconhecido pegou uma bandeja de tipos e os embaralhou para fazer um livro de modelos de tipos.");
             $vitrineProdutos[0]->montar_vitrine();
         ?>
         </div>

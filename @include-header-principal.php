@@ -8,7 +8,7 @@
         -webkit-box-pack: center;
         -ms-flex-pack: center;
         justify-content: center;
-		background-color: #000;
+		background-color: #615f5f;
     }
     .header-principal .nav-header{
         position: relative;
@@ -48,8 +48,8 @@
         color: #FFF;
     }
     .header-principal .nav-header .top-bar .link-padrao:hover{
-        color: #66CD00;
-        border-color: #66CD00;
+        color: #8cd50b;
+        border-color: #8cd50b;
     }
     .header-principal .nav-header .top-bar .header-cart{
         position: relative;
@@ -81,7 +81,7 @@
     }
     .header-principal .nav-header .top-bar .header-cart:hover .cart-button{
         height: 50px;
-        color: #66CD00;
+        color: #8cd50b;
         pointer-events: none;
     }
     .header-principal .nav-header .top-bar .header-cart .cart-display{
@@ -242,7 +242,7 @@
         width: 100%;
         margin-top: 50px;
         height: 100px;
-        border-bottom: 1px solid #66CD00;
+        border-bottom: 1px solid #8cd50b;
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
@@ -266,7 +266,6 @@
         -webkit-transition: .3s;
         -o-transition: .3s;
         transition: .3s;
-        background-color: #333;
     }
     .header-principal .nav-header .top-nav .search-field .form-focused{
         width: 100%;
@@ -281,23 +280,28 @@
         -webkit-transition: .3s;
         -o-transition: .3s;
         transition: .3s;
+		background-color: #333;
+		color: #fff;
+		border-radius: 5px;
     }
     .header-principal .nav-header .top-nav .search-field .search-submit{
         position: absolute;
         border: none;
         width: 40px;
         height: 28px;
-        background-color: rgba(255, 255, 255, 0.5);
+        background-color: #666;
         top: 1px;
         right: 1px;
         cursor: pointer;
         -webkit-transition: .2s;
         -o-transition: .2s;
         transition: .2s;
+		border-bottom-right-radius: 5px;
+	border-top-right-radius: 5px;
     }
     .header-principal .nav-header .top-nav .search-field .search-submit:hover{
-        background-color: #111;
-        color: #fff;
+        background-color: #ccc;
+        color: #000;
     }
     .header-principal .nav-header .top-nav .logo-header{
         width: 40%;
@@ -349,8 +353,8 @@
         transition: .2s;
     }
     .header-principal .nav-header .top-nav .social-media-field .facebook{
-        border: 1px solid #4267b2;
-        color: #4267b2;
+        border: 1px solid #fff;
+        color: #fff;
     }
     .header-principal .nav-header .top-nav .social-media-field .facebook:hover{
         background-color: #4267b2;
@@ -394,6 +398,10 @@
         padding: 0px;
         margin: 0px;
         font-size: 14px;
+		-webkit-box-shadow: 0px 0px 18px 6px rgba(0,0,0,0.69);
+-moz-box-shadow: 0px 0px 18px 6px rgba(0,0,0,0.69);
+box-shadow: 0px 0px 18px 6px rgba(0,0,0,0.69);
+		background-color: #111;
     }
     .display-links::-webkit-scrollbar-button:hover{
         background-color: #AAA;
@@ -429,6 +437,8 @@
     }
     .header-principal .nav-header .active-botao{
         display: block;
+		height: 51px;
+		color: #fff;
     }
     .header-principal .nav-header .display-links span{
         position: relative;
@@ -456,7 +466,7 @@
         -webkit-box-align: center;
         -ms-flex-align: center;
         align-items: center;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid #8cd50b;
         display: none;
     }
     .header-principal .nav-header .display-links .logo-menu-mobile img{
@@ -481,8 +491,8 @@
     }
     .header-principal .nav-header .display-links .link-principal{
         display: inline-block;
-        height: 60px;
-        line-height: 60px;
+        height: 40px;
+        line-height: 40px;
         padding: 0px 10px 0px 10px;
         -webkit-transition: .2s linear;
         -o-transition: .2s linear;
@@ -492,10 +502,10 @@
         font-weight: bold;
     }
     .header-principal .nav-header .display-links .sub-menu{
-        background-color: #f6f6f6;
+        background-color: #000;
         padding: 0px;
         position: absolute;
-        top: 60px;
+        top: 30px;
         left: 0px;
         list-style: none;
         -webkit-transition: .2s;
@@ -508,8 +518,7 @@
         list-style: none;
     }
     .header-principal .nav-header .display-links .first-li .link-principal:hover{
-        background-color: #FFF;
-		color: #66CD00;
+		color: #8cd50b;
     }
     .header-principal .nav-header .display-links .first-li:hover .sub-menu{
         opacity: 1;
@@ -526,7 +535,7 @@
     .header-principal .nav-header .display-links .sub-menu .sub-link{
         display: block;
         text-decoration: none;
-        color: #333;
+        color: #fff;
         width: 85%;
         padding: 10px;
         padding-left: 5%;
@@ -535,10 +544,10 @@
         -o-transition: .2s;
         transition: .2s;
         font-weight: bold;
+		background-color: #333;
     }
     .header-principal .nav-header .display-links .sub-menu li:hover .sub-link{
-        background-color: #303030;
-        color: #fff;
+        color: #8cd50b;
         font-weight: bold;
     }
     .header-principal .nav-header .display-links .sub-menu li .sub-sub-menu{
@@ -612,7 +621,7 @@
         height: 100vh;
         top: 0px;
         left: -100%;
-        background-color: #fff;
+        background-color: #000;
         z-index: 110;
         overflow: hidden;
         overflow-y: auto;
@@ -635,7 +644,7 @@
         line-height: 35px;
         padding: 10px 10% 10px 10%;
         white-space: nowrap;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid #8cd50b;
     }
     .header-principal .nav-header-mobile .display-links .sub-menu{
         position: static;

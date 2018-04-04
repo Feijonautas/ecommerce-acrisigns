@@ -43,12 +43,17 @@
         height: 20px;
         border: none;
         border-bottom: 1px solid #333;
-        outline: none;
         font-size: 14px;
         background-color: transparent;
         outline: none;
-        color: #333;
+        color: #ccc;
+		transition: .1s;
     }
+	.footer-principal .newsletter .form-newsletter input:focus{
+		color: #66CD00;
+		transform: scale(1.05);
+		font-weight: bolder;
+	}
     .footer-principal .newsletter .form-newsletter .btn-submit{
         width: 80px;
         height: 25px;
@@ -60,6 +65,7 @@
         background-color: #66CD00;
 		color: #fff;
         cursor: pointer;
+		transform: scale(1.05);
     }
     .footer-principal .display-links{
         width: 80%;
@@ -232,8 +238,8 @@
 <footer class="footer-principal">
     <div class="newsletter">
        	<img class="logo-footer" src="imagens/identidadeVisual/logo-acrisigns.png">
-        <h3 class="titulo">RECEBA AS NOVIDADES DA MAIDI GREY</h3>
-        <h4 class="subtitulo">Lançamentos e promoções em primeira mão</h4>
+        <h3 class="titulo">Newsletter</h3>
+        <h4 class="subtitulo">Assine nosso informativo e receba as ofertas</h4>
         <form class="form-newsletter">
             <input type="text" placeholder="Digite seu nome" name="nome" class="input-nome">
             <input type="text" placeholder="Digite seu email" name="email" class="input-email">
@@ -312,16 +318,12 @@
 
         $link_footer = null;
         $link_footer[0] = new FooterLinks("PÁGINA INICIAL", "index.php");
-        $link_footer[1] = new FooterLinks("FEMENINO", "loja.php?departamento=feminino");
-        $link_footer[1]->add_sublink(1, "CATEGORIA 1", "loja.php?departamento=feminino&categoria=categoria_1");
-        $link_footer[1]->add_sublink(2, "CATEGORIA 2", "loja.php?departamento=feminino&categoria=categoria_2");
+        $link_footer[1] = new FooterLinks("FESTA", "loja.php?departamento=feminino");
         $link_footer[1]->add_sub_sublink(1, "SUBCATEGORIA 1", "loja.php?departamento=feminino&categoria=categoria_1&subcategoria=subcategoria_1");
         $link_footer[1]->add_sub_sublink(1, "SUBCATEGORIA 2", "loja.php?departamento=feminino&categoria=categoria_1&subcategoria=subcategoria_2");
-        $link_footer[2] = new FooterLinks("MASCULINO", "loja.php?departamento=masculino");
-        $link_footer[3] = new FooterLinks("MOCHILAS", "loja.php?departamento=mochilas");
-        $link_footer[4] = new FooterLinks("ACESSÓRIOS", "loja.php?departamento=acessorios");
-        $link_footer[5] = new FooterLinks("BAZAR", "loja.php?departamento=bazar");
-        $link_footer[6] = new FooterLinks("DICAS", "dicas.php");
+        $link_footer[2] = new FooterLinks("CASA", "loja.php?departamento=masculino");
+        $link_footer[3] = new FooterLinks("BRINQUEDOS", "loja.php?departamento=mochilas");
+        $link_footer[4] = new FooterLinks("BRINDES E DISPLAYS", "loja.php?departamento=acessorios");
 
         $quantidadeLinks = count($link_footer);
         if($quantidadeLinks > 0){
